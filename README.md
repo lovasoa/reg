@@ -1,3 +1,3 @@
-# r g
+# r√äg
 
-r g is a simple grid game.
+r√äg is a simple grid game.
