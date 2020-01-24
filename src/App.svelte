@@ -87,7 +87,7 @@
 	}
 </style>
 
-<h1>r g</h1>
+<h1>r√äg</h1>
 <table class="validatable" class:valid>
 	{#each grid as line}
 		<tr>
