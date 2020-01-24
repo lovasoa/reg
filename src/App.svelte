@@ -19,8 +19,11 @@
   function oponent_move({ x, y, value }) {
     game = game.move(x, y, value).play();
   }
+  
   window.game = game;
-  window.socket = connect_from_url(oponent_move);
+  window.socket = connect_from_url({
+    onmove: oponent_move
+  });
 </script>
 
 <style>
