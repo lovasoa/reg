@@ -12,14 +12,16 @@
   function move(x, y, event) {
     game = game.move(x, y, event.target.value);
   }
+
   function play() {
-    socket.move(game.next_move);
     game = game.play();
+    socket.move(game.grid);
   }
-  function oponent_move({ x, y, value }) {
-    game = game.move(x, y, value).play();
+
+  function oponent_move(grid) {
+    game = game.setGrid(grid);
   }
-  
+
   window.game = game;
   window.socket = connect_from_url({
     onmove: oponent_move

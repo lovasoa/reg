@@ -10,6 +10,12 @@ export class Game {
         this.next_move = null;
     }
 
+    setGrid(grid) {
+        this.grid = grid;
+        this.next_move = null;
+        return this;
+    }
+
     move(x, y, value) {
         value = parseInt(value);
         if (isNaN(value))
@@ -20,6 +26,7 @@ export class Game {
     }
     play() {
         this.grid = this.next_grid();
+        this.next_move = null;
         return this;
     }
     next_grid() {

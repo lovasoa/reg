@@ -19,19 +19,17 @@ class Socket {
         this.onmove = onmove;
     }
     onmessage(event) {
-        console.log(event);
         const msg = JSON.parse(event.data);
         switch (msg.type) {
             case "move":
-                this.onmove(msg.move);
+                this.onmove(msg.grid);
                 break;
             default:
                 console.error("Unhandled message:", msg);
         }
     }
-    move(move) {
-        console.log("move", move)
-        const msg = { type: "move", move };
+    move(grid) {
+        const msg = { type: "move", grid };
         this.websocket.send(JSON.stringify(msg));
     }
 }
