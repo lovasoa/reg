@@ -13,6 +13,10 @@
 </script>
 
 <style>
+  section {
+    display: flex;
+    flex-wrap: wrap;
+  }
   .remaining {
     width: 30px;
     height: 30px;
@@ -21,18 +25,19 @@
     text-align: center;
     font-size: 20px;
     line-height: 30px;
-    display: inline-block;
     margin: 6px;
     user-select: none;
   }
 </style>
 
-{#each remaining as { value, present }}
-  <div
-    class="remaining validatable"
-    class:valid={!present}
-    on:dragstart={e => dragstart(e, value)}
-    draggable={!present}>
-    {value}
-  </div>
-{/each}
+<section>
+  {#each remaining as { value, present }}
+    <div
+      class="remaining validatable"
+      class:valid={!present}
+      on:dragstart={e => dragstart(e, value)}
+      draggable={!present}>
+      {value}
+    </div>
+  {/each}
+</section>
