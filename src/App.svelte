@@ -3,11 +3,8 @@
   import { Game } from "./grid.js";
   import { connect_from_url } from "./network.js";
 
-  window.socket = connect_from_url();
-
   let size = 4;
   let game = new Game(size);
-  window.game = game;
   let valid, error;
   $: error = game.find_error();
   $: valid = !error;
@@ -15,6 +12,15 @@
   function move(x, y, event) {
     game = game.move(x, y, event.target.value);
   }
+  function play() {
+    socket.move(game.next_move);
+    game.play();
+  }
+  function oponent_move({ x, y, value }) {
+    game = game.move(x, y, value).play();
+  }
+  window.game = game;
+  window.socket = connect_from_url(oponent_move);
 </script>
 
 <style>
@@ -85,7 +91,7 @@
     {#if error}
       <p>{error}</p>
     {:else if game.next_move}
-      <button on:click={_ => (game = game.play())}>Play</button>
+      <button on:click={play}>Play</button>
     {:else}
       <p>Your turn ! Place a number somewhere in the grid.</p>
     {/if}

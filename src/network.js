@@ -12,13 +12,31 @@ function random_peer_id() {
 }
 
 class Socket {
-    constructor(channel_id) {
+    constructor(channel_id, onmove) {
         this.id = random_peer_id();
         this.websocket = new WebSocket(`wss://connect.websocket.in/v2/${channel_id}?token=${TOKEN}`);
+        this.websocket.onmessage = this.onmessage.bind(this);
+        this.onmove = onmove;
+    }
+    onmessage(event) {
+        console.log(event);
+        const msg = JSON.parse(event.data);
+        switch (msg.type) {
+            case "move":
+                this.onmove(msg.move);
+                break;
+            default:
+                console.error("Unhandled message:", msg);
+        }
+    }
+    move(move) {
+        console.log("move", move)
+        const msg = { type: "move", move };
+        this.websocket.send(JSON.stringify(msg));
     }
 }
 
-export function connect_from_url() {
+export function connect_from_url(onmove) {
     const url = new URL(window.location);
     const params = new URLSearchParams(url.search);
 
@@ -29,5 +47,5 @@ export function connect_from_url() {
         url.search = params;
         window.history.replaceState(null, "rÊg", url);
     }
-    return new Socket(channel_id);
+    return new Socket(channel_id, onmove);
 }
