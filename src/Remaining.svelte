@@ -1,9 +1,8 @@
 <script>
-  export let grid;
-  const size = grid.length;
+  export let game;
   let remaining, set;
-  $: set = new Set(grid.flat());
-  $: remaining = Array(size * size)
+  $: set = new Set(game.grid.flat());
+  $: remaining = Array(game.size * game.size)
     .fill()
     .map((_, i) => ({ value: i + 1, present: set.has(i + 1) }));
 
@@ -25,7 +24,6 @@
     text-align: center;
     font-size: 20px;
     line-height: 30px;
-    margin: 6px;
     user-select: none;
   }
 </style>

@@ -40,7 +40,7 @@ input, button, select, textarea {
 }
 
 input:disabled {
-	color: #ccc;
+	color: #111;
 }
 
 input[type="range"] {
