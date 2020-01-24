@@ -14,7 +14,7 @@
   }
   function play() {
     socket.move(game.next_move);
-    game.play();
+    game = game.play();
   }
   function oponent_move({ x, y, value }) {
     game = game.move(x, y, value).play();
