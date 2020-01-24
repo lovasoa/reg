@@ -40,6 +40,7 @@
   }
   main {
     width: 500px;
+    max-width: 95%;
     margin: auto;
   }
 </style>
