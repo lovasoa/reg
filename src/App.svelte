@@ -80,10 +80,16 @@
               type="number"
               value={value === null ? '' : value}
               disabled={game.grid[x][y] !== null}
-              on:change={move.bind(null, x, y)}
+              on:input={move.bind(null, x, y)}
               on:keyup={move.bind(null, x, y)}
               on:paste={move.bind(null, x, y)}
               on:dragend={move.bind(null, x, y)}
+              on:blur={_ => {
+                if (error) game = game.move(x, y, null);
+              }}
+              on:focus={_ => {
+                game = game.move(x, y, null);
+              }}
               min="1"
               max={size * size} />
           </td>
