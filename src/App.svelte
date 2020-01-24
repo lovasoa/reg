@@ -1,8 +1,10 @@
 <script>
   import Remaining from "./Remaining.svelte";
   import { find_error } from "./grid.js";
+  import { connect_from_url } from "./network.js";
 
-  let name = "world";
+  window.socket = connect_from_url();
+
   let size = 4;
   let grid = new Array(size).fill().map(_ => new Array(size).fill());
   let valid, error;
