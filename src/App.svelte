@@ -5,6 +5,7 @@
 
   let size = 4;
   let game = new Game(size);
+  let myturn = true;
   let valid, error, possibilities, possibilities_set;
   $: error = game.find_error();
   $: valid = !error;
@@ -12,8 +13,10 @@
   $: possibilities_set = new Set(
     possibilities.flat().flatMap(p => p.possibilities)
   );
+
   function move(x, y, event) {
     game = game.move(x, y, event.target.value);
+    myturn = false;
   }
 
   function play() {
@@ -23,6 +26,7 @@
 
   function oponent_move({ x, y, value }) {
     game = game.move(x, y, value).play();
+    myturn = true;
   }
 
   window.game = game;
@@ -108,6 +112,8 @@
       <p>{error}</p>
     {:else if game.next_move}
       <button on:click={play}>Play</button>
+    {:else if possibilities_set.size == 0}
+      <strong>You {myturn ? 'lost' : 'won'} !</strong>
     {:else}
       <p>Your turn ! Place a number somewhere in the grid.</p>
     {/if}
