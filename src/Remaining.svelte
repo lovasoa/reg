@@ -2,7 +2,7 @@
   export let size, possibilities_set;
   $: remaining = new Array(size * size).fill().map((_, i) => ({
     value: i + 1,
-    present: !possibilities_set.has(i + 1)
+    valid: possibilities_set.has(i + 1)
   }));
 
   function dragstart(e, value) {
@@ -28,12 +28,12 @@
 </style>
 
 <section>
-  {#each remaining as { value, present }}
+  {#each remaining as { value, valid }}
     <div
       class="remaining validatable"
-      class:valid={!present}
+      class:valid
       on:dragstart={e => dragstart(e, value)}
-      draggable={!present}>
+      draggable={valid}>
       {value}
     </div>
   {/each}
