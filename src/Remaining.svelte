@@ -1,10 +1,9 @@
 <script>
-  export let game;
-  let remaining, set;
-  $: set = new Set(game.grid.flat());
-  $: remaining = Array(game.size * game.size)
-    .fill()
-    .map((_, i) => ({ value: i + 1, present: set.has(i + 1) }));
+  export let size, possibilities_set;
+  $: remaining = new Array(size * size).fill().map((_, i) => ({
+    value: i + 1,
+    present: !possibilities_set.has(i + 1)
+  }));
 
   function dragstart(e, value) {
     e.dataTransfer.setData("text/plain", value);

@@ -5,10 +5,13 @@
 
   let size = 4;
   let game = new Game(size);
-  let valid, error;
+  let valid, error, possibilities, possibilities_set;
   $: error = game.find_error();
   $: valid = !error;
-
+  $: possibilities = game.possibilities();
+  $: possibilities_set = new Set(
+    possibilities.flat().flatMap(p => p.possibilities)
+  );
   function move(x, y, event) {
     game = game.move(x, y, event.target.value);
   }
@@ -18,8 +21,8 @@
     socket.move(game.grid);
   }
 
-  function oponent_move(grid) {
-    game = game.setGrid(grid);
+  function oponent_move({ x, y, value }) {
+    game = game.move(x, y, value).play();
   }
 
   window.game = game;
@@ -71,15 +74,17 @@
 
 <main>
   <table class="validatable" class:valid>
-    {#each game.next_grid() as line, x}
+    {#each possibilities as line, x}
       <tr>
-        {#each line as value, y}
+        {#each line as { value, possibilities }, y}
           <td>
             <input
               class="numbox"
               type="number"
               value={value === null ? '' : value}
-              disabled={game.grid[x][y] !== null}
+              pattern={possibilities.join('|')}
+              title={`Values you can play here: ${possibilities.join(', ')}.`}
+              disabled={possibilities.length === 0}
               on:input={move.bind(null, x, y)}
               on:keyup={move.bind(null, x, y)}
               on:paste={move.bind(null, x, y)}
@@ -107,5 +112,5 @@
       <p>Your turn ! Place a number somewhere in the grid.</p>
     {/if}
   </div>
-  <Remaining bind:game />
+  <Remaining bind:possibilities_set bind:size />
 </main>

@@ -1,5 +1,6 @@
 {
-  "name": "svelte-app",
+  "name": "reg-game",
+  "type": "module",
   "version": "1.0.0",
   "scripts": {
     "build": "rollup -c",

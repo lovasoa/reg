@@ -37,6 +37,19 @@ export class Game {
                 (v, j) => i == x && j == y ? value : v));
     }
 
+    possibilities() {
+        const grid = this.grid;
+        const present = new Set(only_nums(grid.flat()));
+        return grid.map(
+            (line, i) => line.map(
+                (value, j) => {
+                    const possibilities = (value === null)
+                        ? bound_possibilities(grid, i, j).filter(i => !present.has(i))
+                        : [];
+                    return { value, possibilities }
+                }));
+    }
+
     find_error() {
         const grid = this.next_grid();
         if (!in_range(grid))
@@ -102,3 +115,42 @@ function diagonals(grid) {
                 .map((_, i) => grid[x + i][y + i]);
         });
 }
+
+function line(grid, x, y, dx, dy) {
+    const size = grid.length;
+    let result = [];
+    for (
+        let i = x + dx, j = y + dy;
+        i >= 0 && j >= 0 && i < size && j < size;
+        i += dx, j += dy
+    ) result.push(grid[i][j]);
+    return result;
+}
+
+function bounds(grid, x, y) {
+    const size = grid.length;
+    let min = 0, max = size * size + 1;
+    for (let [dx, dy] of [[0, 1], [1, 0], [1, 1], [1, -1]]) {
+        let before = only_nums(line(grid, x, y, dx, dy));
+        let after = only_nums(line(grid, x, y, -dx, -dy));
+        let all = [...before.reverse(), ...after];
+        if (all.length >= 2) {
+            let [a, b] = (all[0] > all[1]) ? [after, before] : [before, after];
+            min = Math.max(min, ...a);
+            max = Math.min(max, ...b);
+        }
+        if (min + 1 >= max) break;
+    }
+    return { min, max };
+}
+
+function bound_possibilities(grid, x, y) {
+    let { min, max } = bounds(grid, x, y);
+    if (min >= max) return [];
+    return new Array(max - min - 1).fill(0).map((_, i) => i + min + 1);
+}
+
+console.log(bound_possibilities(
+    [[1, 2, 3], [4, null, null], [7, 8, 9]],
+    1, 1
+))
