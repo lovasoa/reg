@@ -14,23 +14,47 @@ function random_peer_id() {
 class Socket {
     constructor(channel_id, { onmove }) {
         this.id = random_peer_id();
+        this.opponent = null;
         this.websocket = new WebSocket(`wss://connect.websocket.in/v2/${channel_id}?token=${TOKEN}`);
         this.websocket.onmessage = this.onmessage.bind(this);
+        this.websocket.onopen = this.introduce.bind(this);
         this.onmove = onmove;
+        this.buffer = [];
     }
     onmessage(event) {
+        console.log(event.data);
         const msg = JSON.parse(event.data);
         switch (msg.type) {
             case "move":
                 this.onmove(msg.grid);
                 break;
+            case "introduction":
+                if (this.opponent != msg.id) {
+                    this.opponent = msg.id;
+                    this.send_buffer();
+                    this.introduce();
+                }
+                break;
             default:
                 console.error("Unhandled message:", msg);
         }
     }
+    introduce() {
+        this.send({ type: 'introduction', id: this.id }, true);
+    }
     move(grid) {
         const msg = { type: "move", grid };
-        this.websocket.send(JSON.stringify(msg));
+        this.send(msg);
+    }
+    send(msg, force) {
+        if (this.opponent || force)
+            this.websocket.send(JSON.stringify(msg));
+        else
+            this.buffer.push(msg);
+    }
+    send_buffer() {
+        for (let msg of this.buffer) this.send(msg);
+        this.buffer.length = 0;
     }
 }
 

@@ -24,8 +24,8 @@
     socket.move(game.grid);
   }
 
-  function oponent_move({ x, y, value }) {
-    game = game.move(x, y, value).play();
+  function oponent_move(grid) {
+    game = game.setGrid(grid);
     myturn = true;
   }
 
