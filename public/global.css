@@ -41,6 +41,7 @@ input, button, select, textarea {
 
 input:disabled {
 	color: #111;
+	background: #ccc;
 }
 
 input[type="range"] {
