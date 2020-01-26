@@ -87,7 +87,7 @@
               type="number"
               value={value === null ? '' : value}
               pattern={possibilities.join('|')}
-              title={`Values you can play here: ${possibilities.join(', ')}.`}
+              title={possibilities.length > 0 ? `Values you can play here: ${possibilities.join(', ')}.` : "You can't play here"}
               disabled={possibilities.length === 0}
               on:input={move.bind(null, x, y)}
               on:keyup={move.bind(null, x, y)}

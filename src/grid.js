@@ -85,10 +85,6 @@ function is_increasing(line) {
     return line.slice(1).every((x, i) => x > line[i]);
 }
 
-function is_decreasing(line) {
-    return line.slice(1).every((x, i) => x < line[i]);
-}
-
 function is_sorted(grid) {
     const [a, b] = [grid, reversed(grid)].map(g =>
         g.map(only_nums).map(is_increasing)
