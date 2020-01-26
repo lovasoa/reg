@@ -19,21 +19,17 @@ class Socket {
         this.websocket.onmessage = this.onmessage.bind(this);
         this.websocket.onopen = this.introduce.bind(this);
         this.onmove = onmove;
-        this.last_msg = null;
+        this.last_grid = null;
     }
     onmessage(event) {
-        console.log(event.data);
         const msg = JSON.parse(event.data);
         switch (msg.type) {
             case "move":
+                this.last_grid = msg.grid;
                 this.onmove(msg.grid);
                 break;
             case "introduction":
-                if (this.opponent != msg.id) {
-                    this.opponent = msg.id;
-                    this.send_buffer();
-                    this.introduce();
-                }
+                this.onintroduction(msg.id);
                 break;
             default:
                 console.error("Unhandled message:", msg);
@@ -43,8 +39,8 @@ class Socket {
         this.send({ type: 'introduction', id: this.id }, true);
     }
     move(grid) {
-        const msg = { type: "move", grid };
-        this.send(msg);
+        this.last_grid = grid;
+        this.send({ type: "move", grid });
     }
     send(msg, force) {
         const rawMsg = JSON.stringify(msg);
@@ -52,9 +48,13 @@ class Socket {
         if (this.opponent || force)
             this.websocket.send(rawMsg);
     }
-    send_buffer() {
-        if (this.last_msg)
-            this.websocket.send(this.last_msg);
+    onintroduction(id) {
+        if (this.opponent != id) {
+            this.opponent = id;
+            if (this.last_grid)
+                this.move(this.last_grid);
+            this.introduce();
+        }
     }
 }
 
