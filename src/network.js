@@ -19,7 +19,7 @@ class Socket {
         this.websocket.onmessage = this.onmessage.bind(this);
         this.websocket.onopen = this.introduce.bind(this);
         this.onmove = onmove;
-        this.buffer = [];
+        this.last_msg = null;
     }
     onmessage(event) {
         console.log(event.data);
@@ -47,14 +47,14 @@ class Socket {
         this.send(msg);
     }
     send(msg, force) {
+        const rawMsg = JSON.stringify(msg);
+        this.last_msg = rawMsg;
         if (this.opponent || force)
-            this.websocket.send(JSON.stringify(msg));
-        else
-            this.buffer.push(msg);
+            this.websocket.send(rawMsg);
     }
     send_buffer() {
-        for (let msg of this.buffer) this.send(msg);
-        this.buffer.length = 0;
+        if (this.last_msg)
+            this.websocket.send(this.last_msg);
     }
 }
 
