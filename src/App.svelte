@@ -4,15 +4,16 @@
   import { connect_from_url } from "./network.js";
 
   let size = 4;
-  let game = new Game(size);
   let myturn = true;
-  let valid, error, possibilities, possibilities_set;
-  $: error = game.find_error();
-  $: valid = !error;
-  $: possibilities = game.possibilities();
-  $: possibilities_set = new Set(
-    possibilities.flat().flatMap(p => p.possibilities)
-  );
+  const socket = connect_from_url({
+    onmove: oponent_move
+  });
+  let valid, error, possibilities, possibilities_set, game;
+
+  function init() {
+    game = new Game(size);
+    socket.move(game.grid);
+  }
 
   function move(x, y, event) {
     game = game.move(x, y, event.target.value);
@@ -32,10 +33,15 @@
     myturn = true;
   }
 
+  init();
+  $: error = game.find_error();
+  $: valid = !error;
+  $: possibilities = game.possibilities();
+  $: possibilities_set = new Set(
+    possibilities.flat().flatMap(p => p.possibilities)
+  );
   window.game = game;
-  window.socket = connect_from_url({
-    onmove: oponent_move
-  });
+  window.socket = socket;
 </script>
 
 <style>
@@ -70,7 +76,8 @@
     max-width: 95%;
     margin: auto;
   }
-  input[type="submit"] {
+  input[type="submit"],
+  button {
     margin: auto;
     width: 80%;
     display: block;
@@ -118,7 +125,11 @@
       {:else if game.next_move}
         <input type="submit" value="Play" />
       {:else if possibilities_set.size == 0}
-        <strong>You {myturn ? 'lost' : 'won'} !</strong>
+        <button on:click={init}>
+          You
+          <strong>{myturn ? 'lost' : 'won'}</strong>
+          ! Play again ?
+        </button>
       {:else}
         <p>Your turn ! Place a number somewhere in the grid.</p>
       {/if}
