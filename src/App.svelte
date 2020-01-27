@@ -135,12 +135,14 @@
       {:else if !socket.connected()}
         <p
           on:click={e => {
-            e.preventDefault();
-            navigator.share({
-              title: 'Invitation',
-              text: 'You received an invitation to play rEg online ! \n',
-              url: window.location
-            });
+            if (navigator.share) {
+              e.preventDefault();
+              navigator.share({
+                title: 'Invitation',
+                text: 'You received an invitation to play rEg online ! \n',
+                url: window.location
+              });
+            }
           }}>
           Share
           <a href={window.location}>this link</a>
