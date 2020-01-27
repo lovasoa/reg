@@ -8,7 +8,7 @@ rÊg is a simple grid game.
 
 ### En:
 
-* Each player in turn place a number between 1 and the total number of squares of the grid (the maximal number is 16 for a 4x4 grid). Each number can only be placed once.
+* Each player in turn places a number between 1 and the total number of squares of the grid (the maximal number is 16 for a 4x4 grid). Each number can only be placed once.
 
 
 * On a same row, column, or diagonal, the numbers must be either increasing or decreasing
