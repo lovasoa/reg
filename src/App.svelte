@@ -85,7 +85,7 @@
             <input
               class="numbox"
               type="number"
-              bind:value
+              value={value == null ? '' : value}
               pattern={possibilities.join('|')}
               title={possibilities.length > 0 ? `Values you can play here: ${possibilities.join(', ')}.` : "You can't play here"}
               disabled={possibilities.length === 0}
