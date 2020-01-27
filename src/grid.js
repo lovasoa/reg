@@ -150,8 +150,3 @@ function bound_possibilities(grid, x, y) {
     if (min >= max) return [];
     return new Array(max - min - 1).fill(0).map((_, i) => i + min + 1);
 }
-
-console.log(bound_possibilities(
-    [[1, 2, 3], [4, null, null], [7, 8, 9]],
-    1, 1
-))
