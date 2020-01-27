@@ -5,7 +5,7 @@
 
   let size = 4;
   let myturn = true;
-  const socket = connect_from_url({
+  let socket = connect_from_url({
     onmove: oponent_move
   });
   let valid, error, possibilities, possibilities_set, game;
@@ -24,7 +24,7 @@
     if (evt) evt.preventDefault();
     if (!error) {
       game = game.play();
-      socket.move(game.grid);
+      socket = socket.move(game.grid);
     }
   }
 

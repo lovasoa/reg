@@ -41,6 +41,7 @@ class Socket {
     move(grid) {
         this.last_grid = grid;
         this.send({ type: "move", grid });
+        return this;
     }
     send(msg, force) {
         const rawMsg = JSON.stringify(msg);
