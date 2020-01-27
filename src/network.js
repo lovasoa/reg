@@ -56,6 +56,9 @@ class Socket {
             this.introduce();
         }
     }
+    connected() {
+        return this.opponent != null;
+    }
 }
 
 export function connect_from_url(handlers) {

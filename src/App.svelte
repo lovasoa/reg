@@ -130,8 +130,24 @@
           <strong>{myturn ? 'lost' : 'won'}</strong>
           ! Play again ?
         </button>
-      {:else}
+      {:else if myturn}
         <p>Your turn ! Place a number somewhere in the grid.</p>
+      {:else if !socket.connected()}
+        <p
+          on:click={e => {
+            e.preventDefault();
+            navigator.share({
+              title: 'Invitation',
+              text: 'You received an invitation to play rEg online',
+              url: window.location
+            });
+          }}>
+          Share
+          <a href={window.location}>this link</a>
+          with a friend to invite him to play with you.
+        </p>
+      {:else}
+        <p>Waiting for your opponent to play...</p>
       {/if}
     </div>
   </form>
