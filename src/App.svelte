@@ -19,9 +19,12 @@
     myturn = false;
   }
 
-  function play() {
-    game = game.play();
-    socket.move(game.grid);
+  function play(evt) {
+    if (evt) evt.preventDefault();
+    if (!error) {
+      game = game.play();
+      socket.move(game.grid);
+    }
   }
 
   function oponent_move(grid) {
@@ -37,7 +40,7 @@
 
 <style>
   .numbox {
-    font-size: 50px;
+    font-size: 45px;
     width: 70px;
     height: 70px;
     margin: auto;
@@ -67,7 +70,7 @@
     max-width: 95%;
     margin: auto;
   }
-  button {
+  input[type="submit"] {
     margin: auto;
     width: 80%;
     display: block;
@@ -77,47 +80,49 @@
 <h1>rÊg</h1>
 
 <main>
-  <table class="validatable" class:valid>
-    {#each possibilities as line, x}
-      <tr>
-        {#each line as { value, possibilities }, y}
-          <td>
-            <input
-              class="numbox"
-              type="number"
-              pattern={possibilities.join('|')}
-              title={possibilities.length > 0 ? `Values you can play here: ${possibilities.join(', ')}.` : "You can't play here"}
-              disabled={possibilities.length === 0}
-              on:input={move.bind(null, x, y)}
-              on:paste={move.bind(null, x, y)}
-              on:dragend={move.bind(null, x, y)}
-              on:blur={_ => {
-                if (error) game = game.move(x, y, null);
-              }}
-              on:focus={_ => {
-                game = game.move(x, y, null);
-              }}
-              bind:value
-              min="1"
-              step="1"
-              max={size * size}
-              maxlength={Math.floor(1 + Math.log10(size))} />
-          </td>
-        {/each}
-      </tr>
-    {/each}
-  </table>
+  <form on:submit={play}>
+    <table class="validatable" class:valid>
+      {#each possibilities as line, x}
+        <tr>
+          {#each line as { value, possibilities }, y}
+            <td>
+              <input
+                class="numbox"
+                type="number"
+                pattern={possibilities.join('|')}
+                title={possibilities.length > 0 ? `Values you can play here: ${possibilities.join(', ')}.` : "You can't play here"}
+                disabled={possibilities.length === 0}
+                on:input={move.bind(null, x, y)}
+                on:paste={move.bind(null, x, y)}
+                on:dragend={move.bind(null, x, y)}
+                on:blur={_ => {
+                  if (error) game = game.move(x, y, null);
+                }}
+                on:focus={_ => {
+                  game = game.move(x, y, null);
+                }}
+                bind:value
+                min="1"
+                step="1"
+                max={size * size}
+                maxlength={Math.floor(1 + Math.log10(size))} />
+            </td>
+          {/each}
+        </tr>
+      {/each}
+    </table>
 
-  <div class="validatable" class:valid>
-    {#if error}
-      <p>{error}</p>
-    {:else if game.next_move}
-      <button on:click={play}>Play</button>
-    {:else if possibilities_set.size == 0}
-      <strong>You {myturn ? 'lost' : 'won'} !</strong>
-    {:else}
-      <p>Your turn ! Place a number somewhere in the grid.</p>
-    {/if}
-  </div>
+    <div class="validatable" class:valid>
+      {#if error}
+        <p>{error}</p>
+      {:else if game.next_move}
+        <input type="submit" value="Play" />
+      {:else if possibilities_set.size == 0}
+        <strong>You {myturn ? 'lost' : 'won'} !</strong>
+      {:else}
+        <p>Your turn ! Place a number somewhere in the grid.</p>
+      {/if}
+    </div>
+  </form>
   <Remaining bind:possibilities_set bind:size />
 </main>
