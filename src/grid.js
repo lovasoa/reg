@@ -42,8 +42,13 @@ export class Game {
         const present = new Set(only_nums(grid.flat()));
         return grid.map(
             (line, i) => line.map(
-                (value, j) => {
-                    const possibilities = (value === null)
+                (v, j) => {
+                    const value = (
+                        this.next_move &&
+                        this.next_move.x == i &&
+                        this.next_move.y == j
+                    ) ? this.next_move.value : v;
+                    const possibilities = (v === null)
                         ? bound_possibilities(grid, i, j).filter(i => !present.has(i))
                         : [];
                     return { value, possibilities }
