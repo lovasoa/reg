@@ -85,12 +85,10 @@
             <input
               class="numbox"
               type="number"
-              value={value == null ? '' : value}
               pattern={possibilities.join('|')}
               title={possibilities.length > 0 ? `Values you can play here: ${possibilities.join(', ')}.` : "You can't play here"}
               disabled={possibilities.length === 0}
               on:input={move.bind(null, x, y)}
-              on:keyup={move.bind(null, x, y)}
               on:paste={move.bind(null, x, y)}
               on:dragend={move.bind(null, x, y)}
               on:blur={_ => {
@@ -99,8 +97,11 @@
               on:focus={_ => {
                 game = game.move(x, y, null);
               }}
+              bind:value
               min="1"
-              max={size * size} />
+              step="1"
+              max={size * size}
+              maxlength={Math.floor(1 + Math.log10(size))} />
           </td>
         {/each}
       </tr>
