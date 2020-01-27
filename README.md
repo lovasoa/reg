@@ -2,6 +2,7 @@
 
 rÊg is a simple grid game.
 
+![cover image](./public/cover.png)
 
 ## Rules:
 
