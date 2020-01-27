@@ -138,7 +138,7 @@
             e.preventDefault();
             navigator.share({
               title: 'Invitation',
-              text: 'You received an invitation to play rEg online',
+              text: 'You received an invitation to play rEg online ! \n',
               url: window.location
             });
           }}>
