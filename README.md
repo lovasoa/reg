@@ -6,6 +6,30 @@ rÊg is a simple grid game.
 Rules:
 
 
+En:
+
+*Each player in turn place a number between 1 and the total number of squares of the grid (the maximal number is 16 for a 4x4 grid). Each number can only be placed once.
+
+
+*On a same row, column, or diagonal, the numbers must be either increasing or decreasing
+
+
+*A square becomes darker when there are no numbers that can go on it. A player loses when they cannot play at their turn.
+
+
+In order to play with someone:
+
+-click on this link: https://reg-game.netlify.com/
+
+-Send the url of the page that you get to to the person you wanna play with
+
+-When you are both connected on the same page, you can play !
+
+You can also play with a pen and a sheet of paper if you are both in the same room
+
+
+
+
 Fr:
 
 
