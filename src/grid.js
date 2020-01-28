@@ -1,3 +1,5 @@
+import { range } from './utils.js';
+
 /**
  * Grid logic
  */
@@ -124,29 +126,32 @@ function line(grid, x, y, dx, dy) {
         let i = x + dx, j = y + dy;
         i >= 0 && j >= 0 && i < size && j < size;
         i += dx, j += dy
-    ) result.push(grid[i][j]);
+    ) {
+        let value = grid[i][j];
+        if (value !== null)
+            result.push(value);
+    }
     return result;
 }
 
-function bounds(grid, x, y) {
+function line_is_decreasing(before, after) {
+    if (before.length === 0) return after[0] > after[1]
+    if (before.length === 1) return before[0] > after[0]
+    return before[0] < before[1] // Before is in reversed order
+}
+
+export function bound_possibilities(grid, x, y) {
     const size = grid.length;
     let min = 0, max = size * size + 1;
     for (let [dx, dy] of [[0, 1], [1, 0], [1, 1], [1, -1]]) {
-        let before = only_nums(line(grid, x, y, dx, dy));
-        let after = only_nums(line(grid, x, y, -dx, -dy));
-        let all = [...before.reverse(), ...after];
-        if (all.length >= 2) {
-            let [a, b] = (all[0] > all[1]) ? [after, before] : [before, after];
-            min = Math.max(min, ...a);
-            max = Math.min(max, ...b);
+        let before = line(grid, x, y, dx, dy);
+        let after = line(grid, x, y, -dx, -dy);
+        if (before.length + after.length >= 2) {
+            if (line_is_decreasing(before, after)) [after, before] = [before, after];
+            if (before.length) min = Math.max(min, before[0]);
+            if (after.length) max = Math.min(max, after[0]);
         }
         if (min + 1 >= max) break;
     }
-    return { min, max };
-}
-
-function bound_possibilities(grid, x, y) {
-    let { min, max } = bounds(grid, x, y);
-    if (min >= max) return [];
-    return new Array(max - min - 1).fill(0).map((_, i) => i + min + 1);
+    return range(min + 1, max - 1);
 }
