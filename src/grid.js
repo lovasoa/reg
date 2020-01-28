@@ -1,19 +1,19 @@
-import { range } from './utils.js';
+import { Bounds } from './bounds.js';
 
 /**
  * Grid logic
+ * @property {Grid} grid
+ * @property {{x:number, y:number, value:number}?} next_move
  */
 
 export class Game {
     constructor(size) {
-        this.size = size;
-        const empty_arr = _ => new Array(size).fill(null);
-        this.grid = empty_arr().map(empty_arr);
+        this.grid = new Grid(size);
         this.next_move = null;
     }
 
     setGrid(grid) {
-        this.grid = grid;
+        this.grid = new Grid(grid);
         this.next_move = null;
         return this;
     }
@@ -22,136 +22,140 @@ export class Game {
         value = parseInt(value);
         if (isNaN(value))
             this.next_move = null;
-        else if (this.grid[x][y] === null)
+        else if (this.grid.is_free(x, y))
             this.next_move = { x, y, value };
         return this;
     }
     play() {
-        this.grid = this.next_grid();
-        this.next_move = null;
+        const move = this.next_move;
+        if (move) {
+            this.grid.set(move.x, move.y, move.value);
+            this.next_move = null;
+        }
         return this;
-    }
-    next_grid() {
-        if (!this.next_move) return this.grid;
-        const { x, y, value } = this.next_move;
-        return this.grid.map(
-            (line, i) => line.map(
-                (v, j) => i == x && j == y ? value : v));
     }
 
     possibilities() {
-        const grid = this.grid;
-        const present = new Set(only_nums(grid.flat()));
-        return grid.map(
-            (line, i) => line.map(
-                (v, j) => {
-                    const value = (
-                        this.next_move &&
-                        this.next_move.x == i &&
-                        this.next_move.y == j
-                    ) ? this.next_move.value : v;
-                    const possibilities = (v === null)
-                        ? bound_possibilities(grid, i, j).filter(i => !present.has(i))
-                        : [];
-                    return { value, possibilities }
-                }));
+        const r = this.grid.toArrays((value, position) => ({
+            value: value ? value : null,
+            possibilities: value ? [] : this.grid.bound_possibilities(position),
+        }));
+        if (this.next_move) {
+            r[this.next_move.x][this.next_move.y].value = this.next_move.value;
+        }
+        return r;
     }
 
     find_error() {
-        const grid = this.next_grid();
-        if (!in_range(grid))
-            return `All number must be between 1 and ${this.size * this.size}`;
-        if (!is_unique(grid))
+        if (!this.next_move) return;
+        const { x, y, value } = this.next_move;
+        if (value <= 0 || value > this.grid.size * this.grid.size)
+            return `All numbers must be between 1 and ${this.grid.size * this.grid.size}`;
+        if (this.grid.values_set.has(value))
             return `No number can appear more than once`;
-        if (!is_sorted(grid))
-            return `Numbers in a line must be either increasing or decreasing`;
-        if (!is_sorted(columns(grid)))
-            return `Numbers in a column must be either increasing or decreasing`;
-        if (!is_sorted(diagonals(grid)))
-            return `Numbers in the first diagonal must be either increasing or decreasing`;
-        if (!is_sorted(diagonals(reversed(grid))))
-            return `Numbers in the second diagonal must be either increasing or decreasing`;
+        const bounds = new Bounds(this.grid.size);
+        for (const direction of DIRECTIONS) {
+            this.grid.bounds_in_direction(this.next_move, direction, bounds);
+            if (!bounds.has(value))
+                return `Numbers in a ${direction.name} must be either increasing or decreasing`;
+        }
     }
 }
 
-function only_nums(line) {
-    return line.filter(x => x != null);
-}
+const DIRECTIONS = [
+    { dx: 0, dy: 1, name: "line", },
+    { dx: 1, dy: 0, name: "column", },
+    { dx: 1, dy: 1, name: "diagonal", },
+    { dx: 1, dy: -1, name: "diagonal", },
+];
 
-function in_range(grid) {
-    const max = grid.length * grid[0].length;
-    return grid.flat().every(x => x == null || (1 <= x && x <= max));
-}
-
-function is_unique(grid) {
-    let unicity = new Set();
-    return only_nums(grid.flat()).every(x => !unicity.has(x) && unicity.add(x));
-}
-
-function is_increasing(line) {
-    return line.slice(1).every((x, i) => x > line[i]);
-}
-
-function is_sorted(grid) {
-    const [a, b] = [grid, reversed(grid)].map(g =>
-        g.map(only_nums).map(is_increasing)
-    );
-    return a.every((x, i) => x || b[i]);
-}
-
-function columns(grid) {
-    return grid.map((line, i) => line.map((value, j) => grid[j][i]));
-}
-
-function reversed(grid) {
-    return grid.map(line => line.map((_, i) => line[line.length - 1 - i]));
-}
-
-function diagonals(grid) {
-    const size = grid.length;
-    return Array(2 * size)
-        .fill()
-        .map((_, i) => {
-            let [x, y] = i < size ? [0, size - i] : [i - size, 0];
-            return Array(size - x - y)
-                .fill()
-                .map((_, i) => grid[x + i][y + i]);
-        });
-}
-
-function line(grid, x, y, dx, dy) {
-    const size = grid.length;
-    let result = [];
-    for (
-        let i = x + dx, j = y + dy;
-        i >= 0 && j >= 0 && i < size && j < size;
-        i += dx, j += dy
-    ) {
-        let value = grid[i][j];
-        if (value !== null)
-            result.push(value);
-    }
-    return result;
-}
-
-function line_is_decreasing(before, after) {
+function _line_is_decreasing(before, after) {
     if (before.length === 0) return after[0] > after[1]
     if (before.length === 1) return before[0] > after[0]
     return before[0] < before[1] // Before is in reversed order
 }
 
-export function bound_possibilities(grid, x, y) {
-    const size = grid.length;
-    let min = 0, max = size * size + 1;
-    for (let [dx, dy] of [[0, 1], [1, 0], [1, 1], [1, -1]]) {
-        let before = line(grid, x, y, dx, dy);
-        let after = line(grid, x, y, -dx, -dy);
-        if (before.length + after.length >= 2) {
-            if (line_is_decreasing(before, after)) [after, before] = [before, after];
-            if (before.length) min = Math.max(min, before[0]);
-            if (after.length) max = Math.min(max, after[0]);
+export class Grid {
+    constructor(init) {
+        if (Array.isArray(init)) {
+            this.size = Math.sqrt(init.length) | 0;
+            this.data = init;
+        } else {
+            this.size = init | 0;
+            this.data = Array(init * init).fill(0);
         }
-        if (min + 1 >= max) break;
+        this.values_set = new Set(this.data.filter(i => i !== 0));
     }
-    return range(min + 1, max - 1);
+    get(i, j) {
+        return this.data[i * this.size + j];
+    }
+    set(i, j, value) {
+        value = value | 0;
+        const idx = i * this.size + j;
+        this.values_set.delete(this.data[idx]);
+        this.data[idx] = value;
+        if (value) this.values_set.add(value);
+    }
+    is_free(i, j) {
+        return this.get(i, j) === 0
+    }
+    clone() {
+        return new Grid([...this.data]);
+    }
+    toArrays(f) {
+        const grid = new Array(this.size);
+        for (let x = 0; x < this.size; x++) {
+            grid[x] = new Array(this.size);
+            for (let y = 0; y < this.size; y++) {
+                grid[x][y] = f(this.get(x, y), { x, y });
+            }
+        }
+        return grid;
+    }
+
+    _line({ x, y }, dx, dy) {
+        let result = [];
+        for (let i = x + dx, j = y + dy;
+            i >= 0 && j >= 0 && i < this.size && j < this.size;
+            i += dx, j += dy
+        ) {
+            const value = this.get(i, j);
+            if (value !== 0) result.push(value);
+        }
+        return result;
+    }
+
+    /**
+     * @param {{x:number,y:number}} position 
+     * @param {{dx:number,dy:number}} direction 
+     * @param {Bounds} bounds bounds to update so that they reflect the constraints of the grid in the given direction
+     */
+    bounds_in_direction(position, direction, bounds) {
+        let before = this._line(position, direction.dx, direction.dy);
+        let after = this._line(position, -direction.dx, -direction.dy);
+        if (before.length + after.length >= 2) {
+            const decreasing = _line_is_decreasing(before, after);
+            const min = decreasing ? after : before;
+            const max = decreasing ? before : after;
+            if (min.length !== 0) bounds.update_min(min[0]);
+            if (max.length !== 0) bounds.update_max(max[0]);
+        }
+    }
+
+    /**
+     * @param {{x:number,y:number}} position 
+     * @return {number[]} possible values to play at the position 
+     */
+    bound_possibilities(position) {
+        const bounds = new Bounds(this.size);
+        for (const direction of DIRECTIONS) {
+            this.bounds_in_direction(position, direction, bounds);
+            if (bounds.empty()) break;
+        }
+        return bounds.range(this.values_set);
+    }
+
+    toJSON() {
+        return this.data;
+    }
 }

@@ -8,7 +8,8 @@ function random_int(max) {
 }
 
 function random_peer_id() {
-    return btoa(Array(9).fill().map((_, i) => String.fromCharCode(random_int(0xFF))).join(''));
+    return btoa(Array(9).fill(0).map((_, i) =>
+        String.fromCharCode(random_int(0xFF))).join(''));
 }
 
 class Socket {
@@ -63,15 +64,15 @@ class Socket {
 }
 
 export function connect_from_url(handlers) {
-    const url = new URL(window.location);
+    const url = new URL(window.location.toString());
     const params = new URLSearchParams(url.search);
 
-    let channel_id = params.get("id") | 0;
+    let channel_id = params.get("id") || 0;
     if (!channel_id) {
         channel_id = random_int(10000);
-        params.set("id", channel_id);
-        url.search = params;
-        window.history.replaceState(null, "rÊg", url);
+        params.set("id", channel_id.toString());
+        url.search = params.toString();
+        window.history.replaceState(null, "rÊg", url.toString());
     }
     return new Socket(channel_id, handlers);
 }
