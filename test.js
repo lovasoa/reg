@@ -1,4 +1,5 @@
 import { Grid } from './src/grid.js';
+import { evaluate } from './src/ai.js';
 import assert from 'assert';
 import { performance } from 'perf_hooks';
 
@@ -12,18 +13,41 @@ function test_bounds() {
         n, n, n, n, // 2
         n, n, 8, 9, // 3
     ]);
-    assert.deepEqual(grid.bound_possibilities({ x: 0, y: 0 }), [1]);
-    assert.deepEqual(grid.bound_possibilities({ x: 1, y: 3 }), [7]);
-    assert.deepEqual(grid.bound_possibilities({ x: 2, y: 0 }), [7, 10, 11, 12, 13, 14, 15, 16]);
-    assert.deepEqual(grid.bound_possibilities({ x: 2, y: 2 }), [7]);
-    assert.deepEqual(grid.bound_possibilities({ x: 3, y: 0 }), [1, 7]);
-    assert.deepEqual(grid.bound_possibilities({ x: 3, y: 1 }), [7]);
+    assert.deepEqual(grid.possible_moves_at({ x: 0, y: 0 }), [1]);
+    assert.deepEqual(grid.possible_moves_at({ x: 1, y: 3 }), [7]);
+    assert.deepEqual(grid.possible_moves_at({ x: 2, y: 0 }), [7, 10, 11, 12, 13, 14, 15, 16]);
+    assert.deepEqual(grid.possible_moves_at({ x: 2, y: 2 }), [7]);
+    assert.deepEqual(grid.possible_moves_at({ x: 3, y: 0 }), [1, 7]);
+    assert.deepEqual(grid.possible_moves_at({ x: 3, y: 1 }), [7]);
     assert.deepEqual(new Grid([
         1, n, n, n,
         n, 2, n, n,
         4, n, n, n,
         n, n, n, 3,
-    ]).bound_possibilities({ x: 0, y: 2 }), []);
+    ]).possible_moves_at({ x: 0, y: 2 }), []);
+}
+
+function test_ai() {
+    const good = new Grid([ // You can just play 4 at the bottom left and win
+        1, 0, 0, 2,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 3,
+    ]);
+    const bad = new Grid([ // You lost, there is nothing  you can play
+        1, 0, 0, 2,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        4, 0, 0, 3,
+    ]);
+    const uncertain = new Grid([ // Nothing is decided yet
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+    ]);
+    assert.ok(evaluate(good) > evaluate(uncertain), "Good is better than uncertain");
+    assert.ok(evaluate(uncertain) > evaluate(bad), "uncertain is better than bad");
 }
 
 function test_perf() {
@@ -39,10 +63,11 @@ function test_perf() {
         ]);
         for (let x = 0; x < 4; x++)
             for (let y = 0; y < 4; y++)
-                grid.bound_possibilities({ x, y });
+                grid.possible_moves_at({ x, y });
     }
     console.log(`time: ${((performance.now() - start) / N).toFixed(4)} ms`)
 }
 
 test_bounds();
+test_ai();
 test_perf();

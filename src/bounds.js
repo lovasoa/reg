@@ -22,12 +22,16 @@ export class Bounds {
     empty() {
         return this.min + 1 >= this.max;
     }
+    /**
+     * @param {Set<number>?=} filter 
+     * @returns {number[]} All the numbers inside the bounds that are absent not in filter
+     */
     range(filter) {
         const size = this.size();
         const result = [];
         for (let i = 0; i < size; i++) {
             const value = 1 + this.min + i
-            if (!filter.has(value)) result.push(value);
+            if (!filter || !filter.has(value)) result.push(value);
         }
         return result;
     }

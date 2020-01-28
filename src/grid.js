@@ -34,14 +34,15 @@ export class Game {
     }
 
     possibilities() {
-        const r = this.grid.toArrays((value, position) => ({
+        const possible_moves = this.grid.toArrays((value, position) => ({
             value: value ? value : null,
-            possibilities: value ? [] : this.grid.bound_possibilities(position),
+            possibilities: value ? [] : this.grid.possible_moves_at(position),
         }));
         if (this.next_move) {
-            r[this.next_move.x][this.next_move.y].value = this.next_move.value;
+            const { x, y, value } = this.next_move;
+            possible_moves[x][y].value = value;
         }
-        return r;
+        return possible_moves;
     }
 
     find_error() {
@@ -149,7 +150,7 @@ export class Grid {
      * @param {{x:number,y:number}} position 
      * @return {number[]} possible values to play at the position 
      */
-    bound_possibilities(position) {
+    possible_moves_at(position) {
         const bounds = new Bounds(this.size);
         for (const direction of DIRECTIONS) {
             this.bounds_in_direction(position, direction, bounds);
