@@ -2,13 +2,11 @@ import { Bounds } from './bounds.js';
 
 /**
  * Grid logic
- * @property {Grid} grid
- * @property {{x:number, y:number, value:number}?} next_move
  */
-
 export class Game {
     constructor(size) {
         this.grid = new Grid(size);
+        /** @type {{x:number, y:number, value:number}?}*/
         this.next_move = null;
     }
 
@@ -102,6 +100,11 @@ export class Grid {
     clone() {
         return new Grid([...this.data]);
     }
+    /**
+     * @template T the type of a cell content
+     * @param {(v:number, {x,y}) => T} f A function to apply to each cell
+     * @returns {T[][]} A grid (array of arrays) of the mapped values
+     */
     toArrays(f) {
         const grid = new Array(this.size);
         for (let x = 0; x < this.size; x++) {
