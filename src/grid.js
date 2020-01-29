@@ -139,7 +139,9 @@ export class Grid {
         let result = [];
         const pos = { x: 0, y: 0 };
         for (pos.x = x + dx, pos.y = y + dy;
-            pos.x >= 0 && pos.y >= 0 && pos.x < this.size && pos.y < this.size;
+            pos.x >= 0 && pos.y >= 0 &&
+            pos.x < this.size && pos.y < this.size &&
+            result.length <=2;
             pos.x += dx, pos.y += dy
         ) {
             const value = this.get(pos);
