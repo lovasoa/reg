@@ -75,9 +75,11 @@ export function minimax(grid, depth, other) {
     return possibilities.reduce((m1, m2) => m2.evaluation > m1.evaluation ? m2 : m1)
 }
 
-Comlink.expose({
-    minimax(grid_init, depth) {
-        const grid = new Grid(grid_init);
-        return minimax(grid, depth)
-    }
-})
+if (typeof Comlink.expose === "function") {
+    Comlink.expose({
+        minimax(grid_init, depth) {
+            const grid = new Grid(grid_init);
+            return minimax(grid, depth)
+        }
+    })
+}
