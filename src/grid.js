@@ -1,4 +1,9 @@
 import { Bounds } from './bounds.js';
+import BitSet from "bitset";
+
+/**
+ * @typedef {{x:number, y:number, value:number}} Move
+ */
 
 /**
  * Grid logic
@@ -6,7 +11,7 @@ import { Bounds } from './bounds.js';
 export class Game {
     constructor(size) {
         this.grid = new Grid(size);
-        /** @type {{x:number, y:number, value:number}?}*/
+        /** @type {Move?}*/
         this.next_move = null;
     }
 
@@ -50,7 +55,7 @@ export class Game {
         const { x, y, value } = this.next_move;
         if (value <= 0 || value > this.grid.size * this.grid.size)
             return `All numbers must be between 1 and ${this.grid.size * this.grid.size}`;
-        if (this.grid.values_set.has(value))
+        if (this.grid.values_set.get(value))
             return `No number can appear more than once`;
         const bounds = new Bounds(this.grid.size);
         for (const direction of DIRECTIONS) {
@@ -83,7 +88,7 @@ export class Grid {
             this.size = init | 0;
             this.data = Array(init * init).fill(0);
         }
-        this.values_set = new Set(this.data.filter(i => i !== 0));
+        this.values_set = new BitSet(this.data.filter(i => i !== 0));
     }
     get(i, j) {
         return this.data[i * this.size + j];
@@ -91,9 +96,9 @@ export class Grid {
     set(i, j, value) {
         value = value | 0;
         const idx = i * this.size + j;
-        this.values_set.delete(this.data[idx]);
+        this.values_set.set(this.data[idx], 0);
         this.data[idx] = value;
-        if (value) this.values_set.add(value);
+        if (value) this.values_set.set(value, 1);
     }
     is_free(i, j) {
         return this.get(i, j) === 0
@@ -148,11 +153,12 @@ export class Grid {
 
     /**
      * @param {{x:number,y:number}} position 
+     * @param {Bounds=} [bounds] Only search for possible moves in the given bounds 
      * @return {number[]} possible values to play at the position 
      */
-    possible_moves_at(position) {
+    possible_moves_at(position, bounds) {
         if (this.get(position.x, position.y) !== 0) return [];
-        const bounds = new Bounds(this.size);
+        bounds = bounds || new Bounds(this.size);
         for (const direction of DIRECTIONS) {
             this.bounds_in_direction(position, direction, bounds);
             if (bounds.empty()) break;

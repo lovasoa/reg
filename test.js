@@ -1,5 +1,5 @@
 import { Grid } from './src/grid.js';
-import { evaluate_grid, minimax } from './src/ai.js';
+import { evaluate_grid, minimax, remaining_values } from './src/ai.js';
 import assert from 'assert';
 import { performance } from 'perf_hooks';
 
@@ -46,28 +46,36 @@ function test_ai() {
         0, 0, 0, 0,
         0, 0, 0, 0,
     ]);
+
+    assert.deepEqual(remaining_values(bad).toArray(),
+        [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
+
     assert.ok(evaluate_grid(good) > evaluate_grid(uncertain), "Good is better than uncertain");
     assert.ok(evaluate_grid(uncertain) > evaluate_grid(bad), "uncertain is better than bad");
     assert.deepEqual(minimax(bad, 0).move, { x: 3, y: 0, value: 4 })
     assert.deepEqual(minimax(bad, 1).move, { x: 3, y: 0, value: 4 })
+
+    let end_result = minimax(new Grid([
+        1, 2, 3, 4,
+        5, 6, 7, 8,
+        9, 10, 11, 12,
+        0, 14, 15, 0
+    ]), 1);
+    assert.ok([13, 16].includes(end_result.move.value));
+    assert.strictEqual(end_result.evaluation, -Infinity); // I lose anyway
 }
 
 function test_perf() {
     const start = performance.now();
     const n = 0;
-    const N = 1e4;
-    for (let i = 0; i < N; i++) {
-        const grid = new Grid([
-            n, 2, 3, 4,
-            5, 6, n, n,
-            7, n, n, n,
-            n, n, 8, 9,
-        ]);
-        for (let x = 0; x < 4; x++)
-            for (let y = 0; y < 4; y++)
-                grid.possible_moves_at({ x, y });
-    }
-    console.log(`time: ${((performance.now() - start) / N).toFixed(4)} ms`)
+    const grid = new Grid([
+        n, n, n, n,
+        n, n, n, n,
+        n, n, n, n,
+        n, n, n, n,
+    ]);
+    minimax(grid, 1);
+    console.log(`time for a depth-1 minimax: ${(performance.now() - start).toFixed(4)} ms`)
 }
 
 test_bounds();
