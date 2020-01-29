@@ -2,6 +2,7 @@ import { Bounds } from './bounds.js';
 import BitSet from "bitset";
 
 /**
+ * @typedef {{x:number, y:number}} Position
  * @typedef {{x:number, y:number, value:number}} Move
  */
 
@@ -21,18 +22,18 @@ export class Game {
         return this;
     }
 
-    move(x, y, value) {
-        value = parseInt(value);
-        if (isNaN(value))
+    move(move) {
+        move.value = parseInt(move.value);
+        if (isNaN(move.value))
             this.next_move = null;
-        else if (this.grid.is_free(x, y))
-            this.next_move = { x, y, value };
+        else if (this.grid.is_free(move))
+            this.next_move = move;
         return this;
     }
     play() {
         const move = this.next_move;
         if (move) {
-            this.grid.set(move.x, move.y, move.value);
+            this.grid.set(move);
             this.next_move = null;
         }
         return this;
@@ -90,33 +91,45 @@ export class Grid {
         }
         this.values_set = new BitSet(this.data.filter(i => i !== 0));
     }
-    get(i, j) {
-        return this.data[i * this.size + j];
+
+    /**
+     * Get the value at the given coordinates in the grid
+     * @param {Position} position
+     */
+    get(position) {
+        return this.data[position.x * this.size + position.y];
     }
-    set(i, j, value) {
-        value = value | 0;
-        const idx = i * this.size + j;
+
+    /**
+     * Set a position on the grid to a value
+     * @param {Move} move
+     */
+    set(move) {
+        const value = move.value | 0;
+        const idx = move.x * this.size + move.y;
         this.values_set.set(this.data[idx], 0);
         this.data[idx] = value;
         if (value) this.values_set.set(value, 1);
     }
-    is_free(i, j) {
-        return this.get(i, j) === 0
+
+    is_free(pos) {
+        return this.get(pos) === 0
     }
     clone() {
         return new Grid([...this.data]);
     }
     /**
      * @template T the type of a cell content
-     * @param {(v:number, {x,y}) => T} f A function to apply to each cell
+     * @param {(v:number, Position) => T} f A function to apply to each cell
      * @returns {T[][]} A grid (array of arrays) of the mapped values
      */
     toArrays(f) {
         const grid = new Array(this.size);
-        for (let x = 0; x < this.size; x++) {
-            grid[x] = new Array(this.size);
-            for (let y = 0; y < this.size; y++) {
-                grid[x][y] = f(this.get(x, y), { x, y });
+        const pos = { x: 0, y: 0 };
+        for (pos.x = 0; pos.x < this.size; pos.x++) {
+            grid[pos.x] = new Array(this.size);
+            for (pos.y = 0; pos.y < this.size; pos.y++) {
+                grid[pos.x][pos.y] = f(this.get(pos), pos);
             }
         }
         return grid;
@@ -124,11 +137,12 @@ export class Grid {
 
     _line({ x, y }, dx, dy) {
         let result = [];
-        for (let i = x + dx, j = y + dy;
-            i >= 0 && j >= 0 && i < this.size && j < this.size;
-            i += dx, j += dy
+        const pos = { x: 0, y: 0 };
+        for (pos.x = x + dx, pos.y = y + dy;
+            pos.x >= 0 && pos.y >= 0 && pos.x < this.size && pos.y < this.size;
+            pos.x += dx, pos.y += dy
         ) {
-            const value = this.get(i, j);
+            const value = this.get(pos);
             if (value !== 0) result.push(value);
         }
         return result;
@@ -157,7 +171,7 @@ export class Grid {
      * @return {number[]} possible values to play at the position 
      */
     possible_moves_at(position, bounds) {
-        if (this.get(position.x, position.y) !== 0) return [];
+        if (this.get(position) !== 0) return [];
         bounds = bounds || new Bounds(this.size);
         for (const direction of DIRECTIONS) {
             this.bounds_in_direction(position, direction, bounds);

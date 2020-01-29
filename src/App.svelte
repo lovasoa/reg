@@ -19,8 +19,8 @@
     loading = false;
   }
 
-  function move(x, y, event) {
-    game = game.move(x, y, event.target.value);
+  function move(x, y, { target: { value } }) {
+    game = game.move({ x, y, value });
   }
 
   function play(evt) {
@@ -42,8 +42,7 @@
     const start = Date.now();
     const { move } = await minimax(game.grid.toJSON(), 2);
     console.log("suggestion: ", move, "time: ", Date.now() - start, "ms");
-    const { x, y, value } = move;
-    game = game.move(x, y, value);
+    game = game.move(move);
     loading = false;
   }
 
@@ -117,10 +116,10 @@
                 on:paste={move.bind(null, x, y)}
                 on:dragend={move.bind(null, x, y)}
                 on:blur={_ => {
-                  if (error) game = game.move(x, y, null);
+                  if (error) game = game.move({ x, y, value: null });
                 }}
                 on:focus={_ => {
-                  game = game.move(x, y, null);
+                  game = game.move({ x, y, value: null });
                 }}
                 bind:value
                 min="1"

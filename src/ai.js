@@ -7,13 +7,6 @@ import { Bounds } from "./bounds.js";
  * @typedef { import("./grid").Move } Move
  */
 
-function all_positions(size) {
-    const res = new Array();
-    for (let x = 0; x < size; x++)
-        for (let y = 0; y < size; y++)
-            res.push({ x, y });
-    return res;
-}
 
 /**
  * @param {Grid} grid 
@@ -36,16 +29,20 @@ function all_possible_moves(grid) {
  * @returns {BitSet}
  */
 export function remaining_values(grid) {
-    const bounds = new Bounds(grid.size);
+    const size = grid.size;
+    const bounds = new Bounds(size);
     const possibilities = new BitSet();
-    for (const position of all_positions(grid.size)) {
-        let min = bounds.min;
-        let max = bounds.max;
-        for (const value of grid.possible_moves_at(position, bounds)) {
-            possibilities.set(value, 1);
+    const position = { x: 0, y: 0 };
+    for (position.x = 0; position.x < size; position.x++) {
+        for (position.y = 0; position.y < size; position.y++) {
+            let min = bounds.min;
+            let max = bounds.max;
+            for (const value of grid.possible_moves_at(position, bounds)) {
+                possibilities.set(value, 1);
+            }
+            do { bounds.min = min } while (possibilities.get(++min));
+            do { bounds.max = max } while (possibilities.get(--max));
         }
-        do { bounds.min = min } while (possibilities.get(++min));
-        do { bounds.max = max } while (possibilities.get(--max));
     }
     return possibilities;
 }
@@ -69,10 +66,10 @@ export function evaluate_grid(grid) {
  * @returns {T} The result of f(grid), with move applied to grid
  */
 function with_move(grid, move, f) {
-    const saved_value = grid.get(move.x, move.y);
-    grid.set(move.x, move.y, move.value);
+    const saved_value = grid.get(move);
+    grid.set(move);
     const result = f(grid);
-    grid.set(move.x, move.y, saved_value); // Reset the grid to its old value
+    grid.set({ ...move, value: saved_value }); // Reset the grid to its old value
     return result;
 }
 
