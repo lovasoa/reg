@@ -85,9 +85,12 @@ export class Grid {
         if (Array.isArray(init)) {
             this.size = Math.sqrt(init.length) | 0;
             this.data = init;
-        } else {
+        } else if (isFinite(init)) {
             this.size = init | 0;
             this.data = Array(init * init).fill(0);
+        } else {
+            this.size = init.size;
+            this.data = Array.from(init.data);
         }
         this.values_set = new BitSet(this.data.filter(i => i !== 0));
     }
@@ -141,7 +144,7 @@ export class Grid {
         for (pos.x = x + dx, pos.y = y + dy;
             pos.x >= 0 && pos.y >= 0 &&
             pos.x < this.size && pos.y < this.size &&
-            result.length <=2;
+            result.length <= 2;
             pos.x += dx, pos.y += dy
         ) {
             const value = this.get(pos);

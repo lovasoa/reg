@@ -1,49 +1,44 @@
 <script>
   import Remaining from "./Remaining.svelte";
   import { Game } from "./grid.js";
-  import { connect_from_url } from "./network.js";
-  import * as Comlink from "comlink";
-  const { minimax } = Comlink.wrap(new Worker("build/ai.js"));
+  import { NetworkOpponent, AiOpponent } from "./opponent.js";
 
   let size = 4;
   let myturn = true;
-  let loading = true;
-  let socket = connect_from_url({
-    onmove: oponent_move
-  });
+  let connected = false;
   let valid, error, possibilities, possibilities_set, game;
+  let opponent = new NetworkOpponent();
+  wait_spontaneous();
 
-  function init() {
+  async function init() {
     game = new Game(size);
-    socket.move(game.grid);
-    loading = false;
+    myturn = true;
+    play();
+  }
+
+  async function wait_spontaneous() {
+    for (const grid_promise of opponent.spontaneous_plays()) {
+      const grid = await grid_promise;
+      game = game.setGrid(grid);
+      myturn = true;
+      connected = true;
+    }
   }
 
   function move(x, y, { target: { value } }) {
     game = game.move({ x, y, value });
   }
 
-  function play(evt) {
+  async function play(evt) {
     if (evt) evt.preventDefault();
     if (!error) {
       game = game.play();
-      socket = socket.move(game.grid);
       myturn = false;
+      const grid = await opponent.play(game.grid);
+      myturn = true;
+      game = game.setGrid(grid);
+      connected = true;
     }
-  }
-
-  function oponent_move(grid) {
-    game = game.setGrid(grid);
-    myturn = true;
-  }
-
-  async function suggest_move() {
-    loading = true;
-    const start = Date.now();
-    const { move } = await minimax(game.grid.toJSON(), 2);
-    console.log("suggestion: ", move, "time: ", Date.now() - start, "ms");
-    game = game.move(move);
-    loading = false;
   }
 
   init();
@@ -53,8 +48,6 @@
   $: possibilities_set = new Set(
     possibilities.flat().flatMap(p => p.possibilities)
   );
-  window.game = game;
-  window.socket = socket;
 </script>
 
 <style>
@@ -97,7 +90,7 @@
   }
 </style>
 
-<h1 on:dblclick={suggest_move}>rÊg</h1>
+<h1>rÊg</h1>
 
 <main>
   <form on:submit={play}>
@@ -135,8 +128,6 @@
     <div class="validatable" class:valid>
       {#if error}
         <p>{error}</p>
-      {:else if loading}
-        Loading...
       {:else if game.next_move}
         <input type="submit" value="Play" />
       {:else if possibilities_set.size == 0}
@@ -147,7 +138,7 @@
         </button>
       {:else if myturn}
         <p>Your turn ! Place a number somewhere in the grid.</p>
-      {:else if !socket.connected()}
+      {:else if !connected}
         <p
           on:click={e => {
             if (navigator.share) {
