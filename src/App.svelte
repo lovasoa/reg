@@ -2,9 +2,12 @@
   import Remaining from "./Remaining.svelte";
   import { Game } from "./grid.js";
   import { connect_from_url } from "./network.js";
+  import * as Comlink from "comlink";
+  const { minimax } = Comlink.wrap(new Worker("build/ai.js"));
 
   let size = 4;
   let myturn = true;
+  let loading = true;
   let socket = connect_from_url({
     onmove: oponent_move
   });
@@ -13,11 +16,11 @@
   function init() {
     game = new Game(size);
     socket.move(game.grid);
+    loading = false;
   }
 
   function move(x, y, event) {
     game = game.move(x, y, event.target.value);
-    myturn = false;
   }
 
   function play(evt) {
@@ -25,12 +28,22 @@
     if (!error) {
       game = game.play();
       socket = socket.move(game.grid);
+      myturn = false;
     }
   }
 
   function oponent_move(grid) {
     game = game.setGrid(grid);
     myturn = true;
+  }
+
+  async function suggest_move() {
+    loading = true;
+    const { move } = await minimax(game.grid.toJSON(), 1);
+    console.log("suggestion", move);
+    const { x, y, value } = move;
+    game = game.move(x, y, value);
+    loading = false;
   }
 
   init();
@@ -84,7 +97,7 @@
   }
 </style>
 
-<h1>rÊg</h1>
+<h1 on:dblclick={suggest_move}>rÊg</h1>
 
 <main>
   <form on:submit={play}>
@@ -122,6 +135,8 @@
     <div class="validatable" class:valid>
       {#if error}
         <p>{error}</p>
+      {:else if loading}
+        Loading...
       {:else if game.next_move}
         <input type="submit" value="Play" />
       {:else if possibilities_set.size == 0}

@@ -151,6 +151,7 @@ export class Grid {
      * @return {number[]} possible values to play at the position 
      */
     possible_moves_at(position) {
+        if (this.get(position.x, position.y) !== 0) return [];
         const bounds = new Bounds(this.size);
         for (const direction of DIRECTIONS) {
             this.bounds_in_direction(position, direction, bounds);

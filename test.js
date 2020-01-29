@@ -1,5 +1,5 @@
 import { Grid } from './src/grid.js';
-import { evaluate } from './src/ai.js';
+import { evaluate_grid, minimax } from './src/ai.js';
 import assert from 'assert';
 import { performance } from 'perf_hooks';
 
@@ -28,13 +28,13 @@ function test_bounds() {
 }
 
 function test_ai() {
-    const good = new Grid([ // You can just play 4 at the bottom left and win
+    const bad = new Grid([ // You can just play 4 at the bottom left and beat me
         1, 0, 0, 2,
         0, 0, 0, 0,
         0, 0, 0, 0,
         0, 0, 0, 3,
     ]);
-    const bad = new Grid([ // You lost, there is nothing  you can play
+    const good = new Grid([ // We won, there is nothing you can play
         1, 0, 0, 2,
         0, 0, 0, 0,
         0, 0, 0, 0,
@@ -46,8 +46,10 @@ function test_ai() {
         0, 0, 0, 0,
         0, 0, 0, 0,
     ]);
-    assert.ok(evaluate(good) > evaluate(uncertain), "Good is better than uncertain");
-    assert.ok(evaluate(uncertain) > evaluate(bad), "uncertain is better than bad");
+    assert.ok(evaluate_grid(good) > evaluate_grid(uncertain), "Good is better than uncertain");
+    assert.ok(evaluate_grid(uncertain) > evaluate_grid(bad), "uncertain is better than bad");
+    assert.deepEqual(minimax(bad, 0).move, { x: 3, y: 0, value: 4 })
+    assert.deepEqual(minimax(bad, 1).move, { x: 3, y: 0, value: 4 })
 }
 
 function test_perf() {
