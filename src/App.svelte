@@ -39,8 +39,9 @@
 
   async function suggest_move() {
     loading = true;
-    const { move } = await minimax(game.grid.toJSON(), 1);
-    console.log("suggestion", move);
+    const start = Date.now();
+    const { move } = await minimax(game.grid.toJSON(), 2);
+    console.log("suggestion: ", move, "time: ", Date.now() - start, "ms");
     const { x, y, value } = move;
     game = game.move(x, y, value);
     loading = false;

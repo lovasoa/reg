@@ -82,25 +82,23 @@ function with_move(grid, move, f) {
  * @returns {{move:Move?, evaluation:number}}
  */
 export function minimax(grid, depth) {
-    const evaluator = depth === 0
-        ? evaluate_grid
-        : g => -minimax(g, depth - 1).evaluation;
-
-    const best = {
-        /** @type {Move?} */
-        move: null,
-        evaluation: -Infinity
-    };
-
-    for (const move of all_possible_moves(grid)) {
-        const evaluation = with_move(grid, move, evaluator);
-        if (evaluation >= best.evaluation) {
-            best.move = move;
-            best.evaluation = evaluation;
-            if (evaluation === Infinity) break; // Nothing can be better anyway
-        }
-    }
-    return best;
+    return all_possible_moves(grid)
+        .map(move => ({ move, evaluation: with_move(grid, move, evaluate_grid) }))
+        .sort((a, b) => b.evaluation - a.evaluation)
+        .slice(0, 32)
+        .map(move => {
+            if (depth > 0 && isFinite(move.evaluation)) {
+                move.evaluation = -minimax(grid, depth - 1).evaluation;
+            }
+            return move;
+        }).reduce(
+            (m1, m2) => m1.evaluation > m2.evaluation ? m1 : m2,
+            {
+                /** @type {Move?} */
+                move: null,
+                evaluation: -Infinity
+            }
+        );
 }
 
 if (typeof Comlink.expose === "function") {
