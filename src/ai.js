@@ -60,18 +60,16 @@ function with_move(grid, move, f) {
 /**
  * @param {Grid} grid 
  * @param {number} depth How many moves in the future to take into account
- * @param {number} [other=1]
  * @returns {{move:{x:number, y:number, value:number}?, evaluation:number}}
  */
-export function minimax(grid, depth, other) {
-    if (!other) return minimax(grid, depth, 1); // Other is 1 if it's our turn
+export function minimax(grid, depth) {
     const evaluator = depth === 0
         ? evaluate_grid
-        : g => minimax(g, depth - 1, other * -1).evaluation;
+        : g => -minimax(g, depth - 1).evaluation;
     const possibilities = all_possible_moves(grid).map(move => ({
-        move, evaluation: other * with_move(grid, move, evaluator)
+        move, evaluation: with_move(grid, move, evaluator)
     }));
-    if (!possibilities.length) return { move: null, evaluation: -other * Infinity };
+    if (!possibilities.length) return { move: null, evaluation: -Infinity };
     return possibilities.reduce((m1, m2) => m2.evaluation > m1.evaluation ? m2 : m1)
 }
 
