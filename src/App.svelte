@@ -14,10 +14,15 @@
     border: 1px solid black;
     background-color: #ff4136;
     margin: 8px;
+    color:rgb(205, 204, 224);
   }
   :global(.valid) {
-    background-color: #2ecc40;
+    background-color: #346dc2;
   }
+  section{
+    padding-top: 50px;
+  }
+
   main {
     width: 500px;
     max-width: 95%;
@@ -43,7 +48,6 @@
 <main>
   {#if opponent == null}
     <section class="validatable valid">
-      <p>Who do you want to play against ?</p>
       <button on:click={_ => (opponent = new AiOpponent())}>
         Play against an AI
       </button>
