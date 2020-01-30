@@ -1,4 +1,4 @@
-import { connect_from_url } from "./network";
+import { Socket, random_int } from "./network";
 import * as Comlink from "comlink";
 
 /**
@@ -7,11 +7,18 @@ import * as Comlink from "comlink";
  */
 
 export class NetworkOpponent {
-    constructor() {
+    constructor(url, params,) {
         this.accept_spontaneous = _ => console.error("Received a move before initialization");
         this.accept = this.accept_spontaneous;
 
-        this.socket = connect_from_url({
+        let channel_id = params.get("id") || 0;
+        if (!channel_id) {
+            channel_id = random_int(10000);
+            params.set("id", channel_id.toString());
+            url.search = params.toString();
+            window.history.replaceState(null, "rÊg", url.toString());
+        }
+        this.socket = new Socket(channel_id, {
             onmove: grid => {
                 this.accept(grid);
                 this.accept = this.accept_spontaneous;
@@ -53,6 +60,12 @@ export class AiOpponent {
         const { move } = await this.minimax(grid.toJSON(), 2);
         console.log("suggestion: ", move, "time: ", Date.now() - start, "ms");
         grid.set(move);
+        return grid;
+    }
+}
+
+export class NoOpponent {
+    async play(grid) {
         return grid;
     }
 }

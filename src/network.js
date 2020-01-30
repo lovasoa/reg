@@ -3,7 +3,7 @@ const TOKEN = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjA3NDk5YzJjYzVhZTg2N
 /**
  * Returns a random channel ID
  */
-function random_int(max) {
+export function random_int(max) {
     return (Math.random() * max) | 0;
 }
 
@@ -12,7 +12,7 @@ function random_peer_id() {
         String.fromCharCode(random_int(0xFF))).join(''));
 }
 
-class Socket {
+export class Socket {
     constructor(channel_id, { onmove }) {
         this.id = random_peer_id();
         this.opponent = null;
