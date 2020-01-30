@@ -51,6 +51,13 @@
         Play online with a friend
       </button>
       <button on:click={_ => (opponent = new NoOpponent())}>Play alone</button>
+      <p>
+        <small>
+          rÊg is an open source puzzle game.
+          <a href="https://github.com/lovasoa/reg#r%C3%AAg">More info</a>
+          .
+        </small>
+      </p>
     </section>
   {:else}
     <Game bind:opponent />
