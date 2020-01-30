@@ -18,7 +18,7 @@
   :global(.valid) {
     background-color: #1a82a5;
   }
-  a{
+  :global(.validatable a){
     color:#ffffff;
     font-weight: bold;
   }
