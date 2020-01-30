@@ -1,8 +1,8 @@
 # rÊg
 
-rÊg is a simple grid game.
+rÊg is a simple grid game. [Play online !](https://reg-game.netlify.com/)
 
-![cover image](./public/cover.png)
+[![cover image](./public/cover.png)](https://reg-game.netlify.com/)
 
 ## Rules:
 
