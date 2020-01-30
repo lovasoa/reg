@@ -55,7 +55,7 @@ export function evaluate_grid(grid) {
     let remaining = remaining_values(grid).cardinality();
     if (remaining === 0) return Infinity; // The move terminates the game, nothing is better than that
     if (remaining === 1) return -Infinity; // The move let's just one option. The adversary is going to win. Nothing is worse than that.
-    return (-2 * (remaining % 2) + 1) / (remaining + 1); // An odd number of remaining moves may be better ? 
+    return (-2 * (remaining % 2) + 1) * remaining; // An odd number of remaining moves may be better ? 
 }
 
 /**
@@ -82,7 +82,7 @@ export function minimax(grid, depth) {
     return all_possible_moves(grid)
         .map(move => ({ move, evaluation: with_move(grid, move, evaluate_grid) }))
         .sort((a, b) => b.evaluation - a.evaluation)
-        .slice(0, 32)
+        .slice(0, 50)
         .map(move => {
             if (depth > 0 && isFinite(move.evaluation)) {
                 move.evaluation = -minimax(grid, depth - 1).evaluation;
