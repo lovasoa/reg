@@ -19,8 +19,12 @@
   :global(.valid) {
     background-color: #346dc2;
   }
+  a{
+    color:#ffffff;
+  }
   section{
     padding-top: 50px;
+    text-align: center;
   }
 
   main {
