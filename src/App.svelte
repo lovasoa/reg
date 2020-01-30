@@ -12,15 +12,16 @@
     padding: 10px;
     border-radius: 6px;
     border: 1px solid black;
-    background-color: #ff4136;
+    background-color: #da394e;
     margin: 8px;
-    color:rgb(205, 204, 224);
+    color:#dbfcff;
   }
   :global(.valid) {
-    background-color: #346dc2;
+    background-color: #1a82a5;
   }
   a{
     color:#ffffff;
+    font-weight: bold;
   }
   section{
     padding-top: 50px;
