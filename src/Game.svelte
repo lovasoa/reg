@@ -33,7 +33,7 @@
 
   async function play(evt) {
     if (evt) evt.preventDefault();
-    if (!error) {
+    if (myturn && !error) {
       game = game.play();
       myturn = false;
       const grid = await opponent.play(game.grid);
@@ -103,16 +103,12 @@
   <div class="validatable" class:valid>
     {#if error}
       <p>{error}</p>
-    {:else if game.next_move}
-      <input type="submit" value="Play" />
     {:else if possibilities_set.size == 0}
       <button on:click={init}>
         You
         <strong>{myturn ? 'lost' : 'won'}</strong>
         ! Play again ?
       </button>
-    {:else if myturn}
-      <p>Your turn ! Place a number somewhere in the grid.</p>
     {:else if opponent instanceof NetworkOpponent && !connected}
       <p
         on:click={e => {
@@ -129,6 +125,10 @@
         <a href={window.location}>this link</a>
         with a friend to invite him to play with you.
       </p>
+    {:else if myturn && game.next_move}
+      <input type="submit" value="Play" />
+    {:else if myturn}
+      <p>Your turn ! Place a number somewhere in the grid.</p>
     {:else}
       <p>Waiting for your opponent to play...</p>
     {/if}
