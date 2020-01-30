@@ -35,6 +35,7 @@
     if (evt) evt.preventDefault();
     if (myturn && !error) {
       game = game.play();
+      if (game.grid.is_over()) return;
       myturn = false;
       const grid = await opponent.play(game.grid);
       myturn = true;

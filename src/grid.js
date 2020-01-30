@@ -30,6 +30,7 @@ export class Game {
             this.next_move = move;
         return this;
     }
+
     play() {
         const move = this.next_move;
         if (move) {
@@ -118,6 +119,15 @@ export class Grid {
     is_free(pos) {
         return this.get(pos) === 0
     }
+
+    is_over() {
+        return this.data.every(n => n > 0);
+    }
+    
+    is_empty() {
+        return this.values_set.cardinality() == 0;
+    }
+
     clone() {
         return new Grid([...this.data]);
     }

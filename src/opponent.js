@@ -58,15 +58,11 @@ export class AiOpponent {
      */
     async play(grid) {
         const start = Date.now();
+        this.moves_count = grid.is_empty() ? 0 : this.moves_count + 1;
         const depth = 2 + (this.moves_count / 4 | 0);
         const { move } = await this.minimax(grid.toJSON(), depth);
-        if (move) {
-            console.log("suggestion: ", move, "time: ", Date.now() - start, "ms");
-            grid.set(move);
-            this.moves_count++;
-        } else {
-            this.moves_count = 0;
-        }
+        console.log("suggestion: ", move, "time: ", Date.now() - start, "ms");
+        grid.set(move);
         return grid;
     }
 }
