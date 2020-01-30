@@ -11,7 +11,6 @@
   :global(.validatable) {
     padding: 10px;
     border-radius: 6px;
-    border: 1px solid black;
     background-color: #da394e;
     margin: 8px;
     color:#dbfcff;
@@ -38,6 +37,7 @@
   }
 
   button {
+     border-radius: 50px;
     margin-bottom: 10px;
   }
 
