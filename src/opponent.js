@@ -7,7 +7,7 @@ import * as Comlink from "comlink";
  */
 
 export class NetworkOpponent {
-    constructor(url, params,) {
+    constructor(url, params, ) {
         this.accept_spontaneous = _ => console.error("Received a move before initialization");
         this.accept = this.accept_spontaneous;
 
@@ -49,6 +49,7 @@ export class NetworkOpponent {
 export class AiOpponent {
     constructor() {
         this.minimax = Comlink.wrap(new Worker("build/ai.js"))['minimax'];
+        this.moves_count = 0;
     }
 
     /**
@@ -57,9 +58,11 @@ export class AiOpponent {
      */
     async play(grid) {
         const start = Date.now();
-        const { move } = await this.minimax(grid.toJSON(), 2);
+        const depth = 2 + (this.moves_count / 3 | 0);
+        const { move } = await this.minimax(grid.toJSON(), depth);
         console.log("suggestion: ", move, "time: ", Date.now() - start, "ms");
         grid.set(move);
+        this.moves_count++;
         return grid;
     }
 }

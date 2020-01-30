@@ -81,7 +81,10 @@ function with_move(grid, move, f) {
 export function minimax(grid, depth) {
     return all_possible_moves(grid)
         .map(move => ({ move, evaluation: with_move(grid, move, evaluate_grid) }))
-        .sort((a, b) => b.evaluation - a.evaluation)
+        .sort((a, b) => {
+            let evalb = b.evaluation, evala = a.evaluation;
+            return evalb === evala ? Math.random() - .5 : evalb - evala;
+        })
         .slice(0, 50)
         .map(move => {
             if (depth > 0 && isFinite(move.evaluation)) {
