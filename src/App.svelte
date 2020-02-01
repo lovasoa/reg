@@ -6,7 +6,7 @@
   const params = new URLSearchParams(url.search);
   let opponent = params.get("id") ? new NetworkOpponent(url, params) : null;
   let rules = false
-  let language = false
+  let language = window.navigator.language.slice(0,2)
 </script>
 
 <style>
@@ -55,7 +55,7 @@
 <main>
 
   {#if rules == true}
-    {#if language == false}
+    {#if language !== "fr"}
     <p>
      * Each player in turn places a number between 1 and the total number of squares of the grid (the maximal number is 16 for a 4x4 grid). Each number can only be placed once.
      </p>
@@ -65,10 +65,10 @@
     <p>
      * A square becomes darker when there are no numbers that can go on it. A player loses when they cannot play at their turn.
     </p>
-      <button on:click={_ => (language = true)}>Fr</button>
+      <button on:click={_ => (language = "fr")}>Fr</button>
      {/if}
 
-    {#if language == true}
+    {#if language == "fr"}
       <p>
       * Chacun leur tour, les joueurs placent des nombres entre 1 et le nombre de case total sur la grille (pour une grille en 4x4, le nombre maximal qu'on peut poser est 16). Chaque nombre ne peut être posé qu'une fois.
       </p>
@@ -78,7 +78,7 @@
       <p>
       * Une case s'obscurcit lorsqu'on ne peut plus placer aucun nombre dessus. Un joueur perd lorsque c'est son tour et qu'il ne peut plus jouer.
       </p>
-      <button on:click={_ => (language = false)}>En</button>
+      <button on:click={_ => (language = "en")}>En</button>
     {/if}
 
     <button on:click={_ => (opponent = null, rules = false)}>Menu</button>
