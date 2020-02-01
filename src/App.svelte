@@ -65,7 +65,7 @@
     <p>
      * A square becomes darker when there are no numbers that can go on it. A player loses when they cannot play at their turn.
     </p>
-      <button on:click={_ => (language = "fr")}>Fr</button>
+      <button on:click={_ => (language = "fr")}>Français</button>
      {/if}
 
     {#if language == "fr"}
@@ -78,7 +78,7 @@
       <p>
       * Une case s'obscurcit lorsqu'on ne peut plus placer aucun nombre dessus. Un joueur perd lorsque c'est son tour et qu'il ne peut plus jouer.
       </p>
-      <button on:click={_ => (language = "en")}>En</button>
+      <button on:click={_ => (language = "en")}>English</button>
     {/if}
 
     <button on:click={_ => (opponent = null, rules = false)}>Menu</button>
