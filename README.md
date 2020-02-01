@@ -34,7 +34,7 @@ You can also play with a pen and a sheet of paper if you are both in the same ro
 ### Fr:
 
 
- * Chacun leur tour, les joueurs placent des nombres entre 1 et le nombre de case total sur la grille (pour une grille en 4x4, le nombre maximal qu'on peut poser est 16). Chaque nombre ne peut être posé qu'une fois.
+ * Chacun leur tour, les joueurs placent des nombres entre 1 et le nombre de cases total sur la grille (pour une grille en 4x4, le nombre maximal qu'on peut poser est 16). Chaque nombre ne peut être posé qu'une fois.
 
 
  * Sur une même ligne, colonne, ou diagonale, les nombres doivent suivre un ordre croissant ou décroissant.
