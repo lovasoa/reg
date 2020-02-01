@@ -52,9 +52,22 @@
 
 <h1>rÊg</h1>
 <main>
+
   {#if rules == true}
-    rules
+     <p>
+     * Each player in turn places a number between 1 and the total number of squares of the grid (the maximal number is 16 for a 4x4 grid). Each number can only be placed once.
+     </p>
+      
+    <p>
+     * On a same row, column, or diagonal, the numbers must be either increasing or decreasing
+    </p>
+      
+    <p>
+     * A square becomes darker when there are no numbers that can go on it. A player loses when they cannot play at their turn.
+    </p>
+    
     <button on:click={_ => (opponent = null, rules = false)}>Menu</button>
+
   {:else if opponent == null}
     <section class="validatable valid">
       <button on:click={_ => (opponent = new AiOpponent())}>
