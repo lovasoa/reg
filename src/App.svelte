@@ -54,6 +54,7 @@
 <main>
   {#if rules == true}
     rules
+    <button on:click={_ => (opponent = null, rules = false)}>Menu</button>
   {:else if opponent == null}
     <section class="validatable valid">
       <button on:click={_ => (opponent = new AiOpponent())}>
