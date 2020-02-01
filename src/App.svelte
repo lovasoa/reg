@@ -5,6 +5,7 @@
   const url = new URL(window.location.toString());
   const params = new URLSearchParams(url.search);
   let opponent = params.get("id") ? new NetworkOpponent(url, params) : null;
+  let rules = false
 </script>
 
 <style>
@@ -51,7 +52,9 @@
 
 <h1>rÊg</h1>
 <main>
-  {#if opponent == null}
+  {#if rules == true}
+    rules
+  {:else if opponent == null}
     <section class="validatable valid">
       <button on:click={_ => (opponent = new AiOpponent())}>
         Play against an AI
@@ -60,6 +63,7 @@
         Play online with a friend
       </button>
       <button on:click={_ => (opponent = new NoOpponent())}>Play alone</button>
+      <button on:click={_ => (rules = true)}>Rules</button>
       <p>
         <small>
           rÊg is an open source puzzle game.
