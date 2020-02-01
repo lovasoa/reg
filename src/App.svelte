@@ -54,8 +54,12 @@
 <h1>rÊg</h1>
 <main>
 
-  {#if rules == true}
-    {#if language !== "fr"}
+{#if opponent !== null}
+    <Game bind:opponent />
+{:else}
+<section class="validatable valid">
+{#if rules==true}
+ {#if language !== "fr"}
     <p>
      * Each player in turn places a number between 1 and the total number of squares of the grid (the maximal number is 16 for a 4x4 grid). Each number can only be placed once.
      </p>
@@ -82,9 +86,8 @@
     {/if}
 
     <button on:click={_ => (opponent = null, rules = false)}>Menu</button>
-
-  {:else if opponent == null}
-    <section class="validatable valid">
+{:else}
+  
       <button on:click={_ => (opponent = new AiOpponent())}>
         Play against an AI
       </button>
@@ -100,8 +103,11 @@
           .
         </small>
       </p>
-    </section>
-  {:else}
-    <Game bind:opponent />
-  {/if}
+   
+{/if}
+
+</section>
+{/if}
+
+ 
 </main>
