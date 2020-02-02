@@ -38,7 +38,7 @@
     text-align: center;
   }
 
-  ruleStyle {
+  .ruleStyle {
     text-align: left
   }
 
@@ -63,7 +63,7 @@
 {:else}
 <section class="validatable valid">
 {#if rules==true}
-<ruleStyle>
+<div class = ruleStyle>
  {#if language !== "fr"}
     <p>
      * Each player in turn places a number between 1 and the total number of squares of the grid (the maximal number is 16 for a 4x4 grid). Each number can only be placed once.
@@ -91,7 +91,7 @@
     {/if}
 
     <button on:click={_ => (opponent = null, rules = false)}>Menu</button>
- </ruleStyle>
+ </div>
 {:else}
   
       <button on:click={_ => (opponent = new AiOpponent())}>
