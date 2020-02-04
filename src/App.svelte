@@ -55,7 +55,11 @@
   }
 </style>
 
-<h1>rÊg</h1>
+<h1>
+<a
+ href = "https://reg-game.netlify.com/" >rÊg
+</a>
+</h1>
 <main>
 
 {#if opponent !== null}
