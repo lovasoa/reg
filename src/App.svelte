@@ -7,6 +7,9 @@
   let opponent = params.get("id") ? new NetworkOpponent(url, params) : null;
   let rules = false;
   let language = window.navigator.language.slice(0, 2);
+  let online = window.navigator.onLine;
+  window.addEventListener("online", _ => (online = true));
+  window.addEventListener("offline", _ => (online = false));
 </script>
 
 <style>
@@ -110,7 +113,9 @@
         <button on:click={_ => (opponent = new AiOpponent())}>
           Play against an AI
         </button>
-        <button on:click={_ => (opponent = new NetworkOpponent(url, params))}>
+        <button
+          disabled={!online}
+          on:click={_ => (opponent = new NetworkOpponent(url, params))}>
           Play online with a friend
         </button>
         <button on:click={_ => (opponent = new NoOpponent())}>
