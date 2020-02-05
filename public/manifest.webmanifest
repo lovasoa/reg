@@ -1,0 +1,22 @@
+{
+    "short_name": "rÊg",
+    "name": "rÊg Game",
+    "description": "rÊg is a simple puzzle game. You place numbers on a grid so that each line, column and diagonal is sorted in either increasing or decreasing order. The first player not to be able to play loses.",
+    "icons": [
+        {
+            "src": "/favicon.png",
+            "type": "image/png",
+            "sizes": "128x128"
+        },
+        {
+            "src": "/grid-512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "start_url": "/",
+    "background_color": "#1a82a5",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#1a82a5"
+}
