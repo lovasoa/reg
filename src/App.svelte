@@ -58,8 +58,12 @@
   }
 </style>
 
-<h1>
-  <a href="https://reg-game.netlify.com/">rÊg</a>
+<h1
+  on:click={_ => {
+    opponent = null;
+    rules = false;
+  }}>
+  rÊg
 </h1>
 <main>
 
