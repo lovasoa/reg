@@ -93,8 +93,7 @@
               bind:value
               min="1"
               step="1"
-              max={size * size}
-              maxlength={Math.floor(1 + Math.log10(size))} />
+              max={size * size} />
           </td>
         {/each}
       </tr>
