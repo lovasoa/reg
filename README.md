@@ -1,8 +1,8 @@
 # rÊg
 
-rÊg is a simple grid game. [Play online !](https://reg-game.netlify.com/)
+rÊg is a simple grid game. [Play online !](https://reg.ophir.dev/)
 
-[![cover image](./public/cover.png)](https://reg-game.netlify.com/)
+[![cover image](./public/cover.png)](https://reg.ophir.dev/)
 
 ## Rules:
 
@@ -20,7 +20,7 @@ rÊg is a simple grid game. [Play online !](https://reg-game.netlify.com/)
 
 In order to play with someone:
 
--click on [this link](https://reg-game.netlify.com/)
+-click on [this link](https://reg.ophir.dev/)
 
 -Send the url of the page that you get to to the person you wanna play with
 
@@ -47,7 +47,7 @@ You can also play with a pen and a sheet of paper if you are both in the same ro
  Pour jouer avec quelqu'un :
 
 
--cliquer sur [ce lien](https://reg-game.netlify.com/)
+-cliquer sur [ce lien](https://reg.ophir.dev/)
 
 
 -envoyez l'url de la page où ça vous envoie à la personne avec qui vous souhaitez jouer
