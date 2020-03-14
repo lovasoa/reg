@@ -123,7 +123,7 @@
           Play online with a friend
         </button>
         <button on:click={_ => (opponent = new NoOpponent())}>
-          Play alone
+          Play offline
         </button>
         <button on:click={_ => (rules = true)}>Rules</button>
         <p>
