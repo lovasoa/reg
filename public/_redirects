@@ -4,4 +4,5 @@
 /.well-known/assetlinks.json /.well-known/assetlinks.json 200
 
 # Redirect default Netlify subdomain to primary domain
+https://reg-game.netlify.com/* id=:gid https://reg.ophir.dev/:splat?id=:gid 301!
 https://reg-game.netlify.com/* https://reg.ophir.dev/:splat 301!
