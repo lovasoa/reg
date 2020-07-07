@@ -4,10 +4,10 @@ rÊg is a simple grid game. [Play online !](https://reg.ophir.dev/)
 
 [![cover image](./public/cover.png)](https://reg.ophir.dev/)
 
-## Rules:
+## Rules
 
 
-### En:
+### English
 
 * Each player in turn places a number between 1 and the total number of squares of the grid (the maximal number is 16 for a 4x4 grid). Each number can only be placed once.
 
@@ -20,18 +20,18 @@ rÊg is a simple grid game. [Play online !](https://reg.ophir.dev/)
 
 In order to play with someone:
 
--click on [this link](https://reg.ophir.dev/)
+- click on [this link](https://reg.ophir.dev/)
 
--Send the url of the page that you get to to the person you wanna play with
+- Send the url of the page that you get to to the person you wanna play with
 
--When you are both connected on the same page, you can play !
+- When you are both connected on the same page, you can play !
 
 You can also play with a pen and a sheet of paper if you are both in the same room
 
 
 
 
-### Fr:
+### Français
 
 
  * Chacun leur tour, les joueurs placent des nombres entre 1 et le nombre de cases total sur la grille (pour une grille en 4x4, le nombre maximal qu'on peut poser est 16). Chaque nombre ne peut être posé qu'une fois.
@@ -47,13 +47,13 @@ You can also play with a pen and a sheet of paper if you are both in the same ro
  Pour jouer avec quelqu'un :
 
 
--cliquer sur [ce lien](https://reg.ophir.dev/)
+- cliquer sur [ce lien](https://reg.ophir.dev/)
 
 
--envoyez l'url de la page où ça vous envoie à la personne avec qui vous souhaitez jouer
+- envoyez l'url de la page où ça vous envoie à la personne avec qui vous souhaitez jouer
 
 
--Lorsque vous êtes tous les deux sur la même page en même temps, vous pouvez jouer !
+- Lorsque vous êtes tous les deux sur la même page en même temps, vous pouvez jouer !
 
 
 
