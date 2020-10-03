@@ -18,5 +18,12 @@
     "background_color": "#1a82a5",
     "display": "standalone",
     "scope": "/",
-    "theme_color": "#1a82a5"
+    "theme_color": "#1a82a5",
+    "prefer_related_applications": true,
+    "related_applications": [
+        {
+            "platform": "play",
+            "id": "com.netlify.reg"
+        }
+    ]
 }
