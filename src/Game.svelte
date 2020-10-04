@@ -2,6 +2,7 @@
   import Remaining from "./Remaining.svelte";
   import { Game } from "./grid.js";
   import { NetworkOpponent } from "./opponent.js";
+  import t from "./translations.js";
 
   let size = 4;
   let myturn = true;
@@ -79,7 +80,7 @@
               class="numbox"
               type="number"
               pattern={possibilities.join('|')}
-              title={possibilities.length > 0 ? `Values you can play here: ${possibilities.join(', ')}.` : "You can't play here"}
+              title={possibilities.length > 0 ? t`Values you can play here: ${possibilities.join(', ')}.` : t("You can't play here")}
               disabled={possibilities.length === 0}
               on:input={move.bind(null, x, y)}
               on:paste={move.bind(null, x, y)}
@@ -126,11 +127,11 @@
         with a friend to invite him to play with you.
       </p>
     {:else if myturn && game.next_move}
-      <input type="submit" value="Play" />
+      <input type="submit" value={t('Play')} />
     {:else if myturn}
-      <p>Your turn ! Place a number somewhere in the grid.</p>
+      <p>{t('Your turn ! Place a number somewhere in the grid.')}</p>
     {:else}
-      <p>Waiting for your opponent to play...</p>
+      <p>{t('Waiting for your opponent to play...')}</p>
     {/if}
   </div>
 </form>

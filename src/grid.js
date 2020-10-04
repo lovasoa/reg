@@ -1,5 +1,6 @@
 import { Bounds } from './bounds.js';
 import BitSet from "bitset";
+import t from "./translations.js";
 
 /**
  * @typedef {{x:number, y:number}} Position
@@ -56,14 +57,14 @@ export class Game {
         if (!this.next_move) return;
         const { x, y, value } = this.next_move;
         if (value <= 0 || value > this.grid.size * this.grid.size)
-            return `All numbers must be between 1 and ${this.grid.size * this.grid.size}`;
+            return t`All numbers must be between 1 and ${this.grid.size * this.grid.size}`;
         if (this.grid.values_set.get(value))
-            return `No number can appear more than once`;
+            return t`No number can appear more than once`;
         const bounds = new Bounds(this.grid.size);
         for (const direction of DIRECTIONS) {
             this.grid.bounds_in_direction(this.next_move, direction, bounds);
             if (!bounds.has(value))
-                return `Numbers in a ${direction.name} must be either increasing or decreasing`;
+                return t`Numbers in a ${direction.name} must be either increasing or decreasing`;
         }
     }
 }
@@ -123,7 +124,7 @@ export class Grid {
     is_over() {
         return this.data.every(n => n > 0);
     }
-    
+
     is_empty() {
         return this.values_set.cardinality() == 0;
     }

@@ -1,6 +1,7 @@
 <script>
   import { NetworkOpponent, AiOpponent, NoOpponent } from "./opponent.js";
   import Game from "./Game.svelte";
+  import t from "./translations.js";
 
   const url = new URL(window.location.toString());
   const params = new URLSearchParams(url.search);
@@ -119,22 +120,21 @@
         </ul>
       {:else}
         <button on:click={_ => (opponent = new AiOpponent())}>
-          Play against an AI
+          {t('Play against an AI')}
         </button>
         <button
           disabled={!online}
           on:click={_ => (opponent = new NetworkOpponent(url, params))}>
-          Play online with a friend
+          {t('Play online with a friend')}
         </button>
         <button on:click={_ => (opponent = new NoOpponent())}>
-          Play offline
+          {t('Play offline')}
         </button>
-        <button on:click={_ => (rules = true)}>Rules</button>
+        <button on:click={_ => (rules = true)}>{t('Rules')}</button>
         <p>
           <small>
-            rÊg is an open source puzzle game.
-            <a href="https://github.com/lovasoa/reg#r%C3%AAg">More info</a>
-            .
+            {t('rÊg is an open source puzzle game.')}
+            <a href="https://github.com/lovasoa/reg#r%C3%AAg">{t('More info')}</a>.
           </small>
         </p>
       {/if}
