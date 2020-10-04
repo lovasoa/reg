@@ -16,7 +16,7 @@ export class Opponent {
     constructor(url) {
         this.url = url;
         this.params = new URLSearchParams(url.search);
-        this.params.set('opponent', this.constructor.name);
+        this.params.set('opponent', this.opponentIdx());
     }
     /**
      * @param {Grid} grid 
@@ -31,24 +31,29 @@ export class Opponent {
         this.url.search = this.params.toString();
     }
     /**
-     * @param {{_cls?:string, url: URL}} opponent
+     * @param {{_cls:number, url: URL}} opponent
      * @returns {Opponent|undefined} 
      */
     static fromJSON({ _cls, url }) {
-        if (!_cls) {
-            const params = new URLSearchParams(url.search);
-            const opponent = params.get('opponent');
-            if (params.get("id")) _cls = 'NetworkOpponent';
-            else if (opponent) _cls = opponent;
-            else return;
-        }
-        const cls = {
-            NetworkOpponent, AiOpponent, NoOpponent
-        }[_cls];
-        return new cls(url);
+        return new OPPONENTS[_cls](url);
+    }
+    /**
+     * @param {URL} url
+     * @returns {Opponent|undefined} 
+     */
+    static fromURL(url) {
+        const params = new URLSearchParams(url.search);
+        let _cls = parseInt(params.get('opponent') || '');
+        if (params.get("id")) _cls = OPPONENTS.indexOf(NetworkOpponent);
+        if (_cls >= 0) return Opponent.fromJSON({ _cls, url });
     }
     toJSON() {
-        return { ...this, _cls: this.constructor.name }
+        return { ...this, _cls: this.opponentIdx() }
+    }
+    opponentIdx() {
+        // @ts-ignore
+        const idx = OPPONENTS.indexOf(this.constructor);
+        return idx >= 0 ? idx.toString() : '';
     }
 }
 
@@ -113,3 +118,6 @@ export class AiOpponent extends Opponent {
 }
 
 export class NoOpponent extends Opponent { }
+
+/**@type {(typeof Opponent)[]} */
+const OPPONENTS = [NetworkOpponent, AiOpponent, NoOpponent];

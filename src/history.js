@@ -31,9 +31,7 @@ function hydrate(serialized) {
  */
 function initialState() {
     const url = new URL(window.location.toString());
-    return {
-        "opponent": Opponent.fromJSON({ url })
-    };
+    return { "opponent": Opponent.fromURL(url) };
 }
 
 const historyStore = writable(initialState());

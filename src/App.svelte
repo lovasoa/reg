@@ -1,13 +1,13 @@
 <script>
   import history from "./history.js";
-  import { Opponent } from "./opponent.js";
+  import { NetworkOpponent, NoOpponent, AiOpponent } from "./opponent.js";
   import Game from "./Game.svelte";
   import Rules from "./Rules.svelte";
   import t from "./translations.js";
 
-  function playAgainst(_cls) {
+  function playAgainst(cls) {
     const url = new URL(window.location);
-    $history.opponent = Opponent.fromJSON({ _cls, url });
+    $history.opponent = new cls(url);
   }
 
   function reset() {
@@ -73,15 +73,13 @@
       {#if showRules == true}
         <Rules onClose={() => (showRules = false)} />
       {:else}
-        <button on:click={_ => playAgainst('AiOpponent')}>
+        <button on:click={_ => playAgainst(AiOpponent)}>
           {t('Play against an AI')}
         </button>
-        <button
-          disabled={!online}
-          on:click={_ => playAgainst('NetworkOpponent')}>
+        <button disabled={!online} on:click={_ => playAgainst(NetworkOpponent)}>
           {t('Play online with a friend')}
         </button>
-        <button on:click={_ => playAgainst('NoOpponent')}>
+        <button on:click={_ => playAgainst(NoOpponent)}>
           {t('Play offline')}
         </button>
         <button on:click={_ => (showRules = true)}>{t('Rules')}</button>
