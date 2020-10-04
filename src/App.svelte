@@ -1,13 +1,21 @@
 <script>
-  import { NetworkOpponent, AiOpponent, NoOpponent } from "./opponent.js";
+  import history from "./history.js";
+  import { Opponent } from "./opponent.js";
   import Game from "./Game.svelte";
   import Rules from "./Rules.svelte";
   import t from "./translations.js";
 
-  const url = new URL(window.location.toString());
-  const params = new URLSearchParams(url.search);
-  let opponent = params.get("id") ? new NetworkOpponent(url, params) : null;
-  let rules = false;
+  function playAgainst(_cls) {
+    const url = new URL(window.location);
+    $history.opponent = Opponent.fromJSON({ _cls, url });
+  }
+
+  function reset() {
+    $history = {};
+    showRules = false;
+  }
+
+  let showRules = false;
   let online = window.navigator.onLine;
   window.addEventListener("online", _ => (online = true));
   window.addEventListener("offline", _ => (online = false));
@@ -55,34 +63,28 @@
   }
 </style>
 
-<h1
-  on:click={_ => {
-    opponent = null;
-    rules = false;
-  }}>
-  rÊg
-</h1>
+<h1 on:click={reset}>rÊg</h1>
 <main>
 
-  {#if opponent !== null}
-    <Game bind:opponent />
+  {#if $history.opponent != null}
+    <Game bind:opponent={$history.opponent} />
   {:else}
     <section class="validatable valid">
-      {#if rules == true}
-        <Rules onClose={() => (rules = false)} />
+      {#if showRules == true}
+        <Rules onClose={() => (showRules = false)} />
       {:else}
-        <button on:click={_ => (opponent = new AiOpponent())}>
+        <button on:click={_ => playAgainst('AiOpponent')}>
           {t('Play against an AI')}
         </button>
         <button
           disabled={!online}
-          on:click={_ => (opponent = new NetworkOpponent(url, params))}>
+          on:click={_ => playAgainst('NetworkOpponent')}>
           {t('Play online with a friend')}
         </button>
-        <button on:click={_ => (opponent = new NoOpponent())}>
+        <button on:click={_ => playAgainst('NoOpponent')}>
           {t('Play offline')}
         </button>
-        <button on:click={_ => (rules = true)}>{t('Rules')}</button>
+        <button on:click={_ => (showRules = true)}>{t('Rules')}</button>
         <p>
           <small>
             {t('rÊg is an open source puzzle game.')}
