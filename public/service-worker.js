@@ -1,6 +1,8 @@
+const CACHE = 'v2';
+
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open('v1').then((cache) => {
+        caches.open(CACHE).then((cache) => {
             return cache.addAll([
                 '/',
                 '/index.html',
@@ -14,26 +16,34 @@ self.addEventListener('install', (event) => {
     );
 });
 
-/// Tries to cache a request, and times out after 500ms
-function try_cache(request) {
-    return new Promise(async accept => {
-        const timeout = setTimeout(accept, 500);
-        try {
-            const cache = await caches.open('v1');
-            await cache.add(request);
-        } catch (e) {
-            console.error("Failed to query " + request.url, e);
-        } finally {
-            clearTimeout(timeout);
-            accept();
-        }
+function timeout(promise, ms) {
+    return new Promise(async (accept, reject) => {
+        const t = setTimeout(reject, ms, new Error("timeout"));
+        await promise.then(accept).catch(reject);
+        clearTimeout(t);
     });
 }
 
+function onSuccess(evt) {
+    return async (response) => {
+        console.log(`Adding ${evt.request.url} to cache ${CACHE}`)
+        const cache = await caches.open(CACHE);
+        await cache.delete(evt.request);
+        await cache.put(evt.request, response.clone());
+        return response.clone();
+    }
+}
+
+function onError(evt) {
+    return async (err) => {
+        console.error(`Serving ${evt.request.url} from cache ${CACHE} because request returned ${err}`);
+        const response = await caches.match(evt.request, { cacheName: CACHE });
+        return response || new Response(err);
+    }
+}
+
 self.addEventListener('fetch', (evt) => {
-    evt.respondWith(new Promise(async (accept) => {
-        await try_cache(evt.request);
-        const response = await caches.match(evt.request);
-        accept(response || new Response("No network and no cache for " + evt.request.url, { status: 404 }));
-    }));
+    evt.respondWith(
+        timeout(fetch(evt.request).then(onSuccess(evt)), 500)
+            .catch(onError(evt)));
 });
